@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+		<s:Rect top="2" bottom="2" left="0" right="0">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry color="#a0824c" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<!-- binding -->
+		<s:Rect top="2" bottom="2" left="22" width="2">
+			<s:fill>
+				<s:SolidColor color="#4C4C4C" />
+			</s:fill>
+		</s:Rect>
+		<s:Rect top="2" bottom="2" left="0" width="22">
+			<s:fill>
+				<s:LinearGradient rotation="0">
+					<s:GradientEntry color="#FFFFFF" alpha="0.2"/>
+					<s:GradientEntry color="#000000" alpha="0.2"/>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<!-- page -->
+		<s:Rect top="6" bottom="6" left="24" right="12">
+			<s:stroke>
+				<s:SolidColorStroke color="#000000" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="#FFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<!-- page -->
+		<s:Rect top="4" bottom="4" left="24" right="15">
+			<s:stroke>
+				<s:SolidColorStroke color="#000000" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="#FFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<!-- page -->
+		<s:Rect top="2" bottom="2" left="24" right="18">
+			<s:stroke>
+				<s:SolidColorStroke color="#000000" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="#FFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<!-- page -->
+		<s:Rect top="0" bottom="0" left="24" right="21">
+			<s:stroke>
+				<s:SolidColorStroke color="#000000" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="#FFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<!-- turned page gradient -->
+		<s:Rect top="0" bottom="0" left="24" width="132">
+			<s:fill>
+				<s:LinearGradient rotation="180">
+					<s:GradientEntry color="#FFFFFF" alpha="0.2"/>
+					<s:GradientEntry color="#000000" alpha="0.2"/>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		
+</s:Group>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import com.widged.events.DataObjectEvent;
+			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
+			
+			import spark.components.IItemRenderer;
+			import spark.events.RendererExistenceEvent;
+			
+			public static const LETTER_POINTER_CHANGE:String = "letterPointerChange";
+
+			private const FIRST_LETTER:String = 'A'; 
+			private const LAST_LETTER:String  = 'W'; 
+			private const DEFAULT_LETTER:String = FIRST_LETTER; 
+			private const POINTER_HALF_WIDTH:int = 14;
+
+			private var _selectedLetter:String;
+			private var _letterCenters:Object = {};
+
+
+			// #######################
+			// ### Setters, Getters
+			// #######################
+			
+			public function set selectedLetter(value:String):void { _selectedLetter = forceLetter(value); }
+
+			// #######################
+			// ### Pointer
+			// #######################
+			
+			private function onPointerMouseDown(event:MouseEvent):void
+			{
+				addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				addEventListener(MouseEvent.MOUSE_UP, onDraggingStop);
+				addEventListener(MouseEvent.ROLL_OUT, onDraggingStop);
+			}
+			
+			private function onMouseMove(event:MouseEvent):void
+			{
+				var firstCenter:int = _letterCenters[FIRST_LETTER];
+				var lastCenter:int  = _letterCenters[LAST_LETTER];
+				var center:int = mouseX;
+				center =  Math.min(center, lastCenter);
+				center  = Math.max(center, firstCenter);
+				letterPointer.left	= centerToLeft(center);
+			}
+			
+			private function onDraggingStop(event:MouseEvent):void
+			{
+				removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+				removeEventListener(MouseEvent.MOUSE_UP, onDraggingStop);
+				removeEventListener(MouseEvent.ROLL_OUT, onDraggingStop);
+				
+				
+				// position the center of the pointer over the center of the closest letter
+				var pointerCenter:int = leftToCenter(letterPointer.left as int);
+				var dist:int = 999;
+				var closestCenter:int = 0;
+				var letterCenter:int;
+				var newDist:int;
+				var newLetter:String;
+				for (var str:String in _letterCenters)
+				{
+					letterCenter = _letterCenters[str];
+					newDist = Math.abs(letterCenter - pointerCenter);
+					if(dist > newDist) { 
+						dist = newDist;
+						newLetter = str;
+					} 
+				}
+				if(newLetter != _selectedLetter)
+				{
+					_selectedLetter = newLetter;
+					letterPointer.left = centerToLeft(_letterCenters[_selectedLetter]);
+					dispatchEvent(new DataObjectEvent(ScrollerAZ.LETTER_POINTER_CHANGE, {letter: _selectedLetter}))
+				}
+			}
+			
+			// #######################
+			// ### Letters
+			// #######################
+
+			private var _letterRenderers:Array;
+			
+			// ### Interaction, events
+			
+			private function onLettersInitialize():void
+			{
+				_letterRenderers = [];
+			}
+
+			private function onLetterAdd(event:RendererExistenceEvent):void
+			{
+				// at this stage, the component is not complete and x is not set yet;
+				_letterRenderers.push(event.renderer);
+			}
+
+			private function onLettersComplete():void
+			{
+				_letterCenters = {};
+				for (var i:int = 0; i < _letterRenderers.length; i++)
+				{
+					var item:IItemRenderer = _letterRenderers[i] as IItemRenderer;
+					_letterCenters[item.data] = item.x   + letterDG.x + Math.floor(item.width / 2);
+				}
+				_letterRenderers = null; // Ok on mobile devices. We may not want to null it if it needs updating after a screen resize
+				_selectedLetter = forceLetter(_selectedLetter);
+				letterPointer.left = centerToLeft(_letterCenters[_selectedLetter]);
+			}
+
+			// ## utils
+			
+			public function forceLetter(str:String):String { 
+				if(!str || !str.length) { return DEFAULT_LETTER; }
+				if(letterList && !letterList.hasOwnProperty(str)) { return DEFAULT_LETTER; }
+				return str;
+			}
+			
+			private function centerToLeft(x:int):int
+			{
+				return x  - POINTER_HALF_WIDTH;
+			}
+
+			private function leftToCenter(x:int):int
+			{
+				return x  + POINTER_HALF_WIDTH;
+			}
+
+		]]>
+	</fx:Script>
+	<!-- background -->
+	<s:Rect top="0" height="33" left="0" right="0">
+		<s:fill>
+			<s:LinearGradient rotation="90">
+				<s:GradientEntry color="#4C4C4C" />
+				<s:GradientEntry color="#AAAAAA" />
+			</s:LinearGradient>
+		</s:fill>
+	</s:Rect>
+
+	<!-- letters -->
+	<s:DataGroup
+		id="letterDG"
+		top="10" horizontalCenter="0" 
+		initialize="onLettersInitialize()"
+		rendererAdd="onLetterAdd(event)"
+		creationComplete="onLettersComplete()" 
+	>
+		<s:dataProvider>
+			<s:ArrayList id="letterList">
+				<fx:String>A</fx:String>
+				<fx:String>E</fx:String>
+				<fx:String>H</fx:String>
+				<fx:String>I</fx:String>
+				<fx:String>K</fx:String>
+				<fx:String>M</fx:String>
+				<fx:String>N</fx:String>
+				<fx:String>Ng</fx:String>
+				<fx:String>O</fx:String>
+				<fx:String>P</fx:String>
+				<fx:String>R</fx:String>
+				<fx:String>T</fx:String>
+				<fx:String>U</fx:String>
+				<fx:String>W</fx:String>
+			</s:ArrayList>
+		</s:dataProvider>
+		<s:layout>
+			<s:HorizontalLayout 
+				paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" gap="10" 
+				useVirtualLayout="false"/>
+		</s:layout>
+		<s:itemRenderer>
+			<fx:Component>
+				<s:ItemRenderer autoDrawBackground="false">
+					<s:Label id="letterLabel"
+						text="{data}"
+						verticalCenter="0" 
+						color="#CCCCCC"
+						maxDisplayedLines="1" 
+						horizontalCenter="0"
+					/>
+					
+				</s:ItemRenderer>
+			</fx:Component>
+		</s:itemRenderer>
+	</s:DataGroup>
+	
+	<!-- pointer -->
+	<s:Group id="letterPointer" 
+		top="6" left="3"  width="28" 
+		mouseDown="onPointerMouseDown(event)"
+		>
+		<s:Rect 
+			height="22" left="0" right="0" 
+			topLeftRadiusX="3" topLeftRadiusY="3" topRightRadiusX="3" topRightRadiusY="3" 
+		>
+			<s:stroke>
+				<s:LinearGradientStroke weight="4" rotation="90">
+					<s:GradientEntry color="#efb945" />
+					<s:GradientEntry color="#e08625" />
+				</s:LinearGradientStroke>
+			</s:stroke>
+		</s:Rect>
+		<s:Rect 
+			top="20" height="9" left="0" right="0" 
+			bottomLeftRadiusX="3" bottomLeftRadiusY="3" bottomRightRadiusX="3" bottomRightRadiusY="3" 
+			>
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry color="#e08625" />
+					<s:GradientEntry color="#db8125" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+		<s:Line top="16" horizontalCenter="0" width="2">
+			<s:stroke>
+				<s:SolidColorStroke color="#e08625" />
+			</s:stroke>
+		</s:Line>
+		<s:Line top="17" horizontalCenter="0" width="4">
+			<s:stroke>
+				<s:SolidColorStroke color="#e08625" />
+			</s:stroke>
+		</s:Line>
+		<s:Line top="18" horizontalCenter="0" width="6">
+			<s:stroke>
+				<s:SolidColorStroke color="#e08625" />
+			</s:stroke>
+		</s:Line>
+		<s:Line top="19" horizontalCenter="0" width="8">
+			<s:stroke>
+				<s:SolidColorStroke color="#e08625" />
+			</s:stroke>
+		</s:Line>
+	</s:Group>
+	
+
+</s:SkinnableContainer>

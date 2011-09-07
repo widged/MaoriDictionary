@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Christophe Coenraets, http://coenraets.org -->
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				width="100%" height="86" 
+				creationComplete="onCreationComplete()" 
+				dataChange="onDataChange()"
+>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.widged.maoriDictionary.framework.FrameworkConstants;
+			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
+			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
+			import com.widged.maoriDictionary.word.vo.WordItem;
+			
+			import spark.components.supportClasses.StyleableTextField;
+
+			// event bus
+			private var frameworkDispatcher:FrameworkDispatcher;
+			// class data 
+			private var dataChanged : Boolean = true;
+
+			// #################################
+			// ##   Events, Interaction
+			// #################################
+
+			protected function onCreationComplete() : void
+			{
+				addEventListener(MouseEvent.CLICK, onClick, true);
+				rowBackgound.color = itemIndex % 2 ? 0xFFFFFF : 0xEFEFEF;
+				definitionArea.setStyle("contentBackgroundColor", rowBackgound.color);
+			}
+
+			private function onDefinitionAreaComplete() : void
+			{
+				StyleableTextField(definitionArea.textDisplay).styleSheet=FrameworkConstants.css;
+				commitData();
+			}
+			
+			private function onDataChange() : void
+			{
+				dataChanged = true;
+				commitData();
+			}
+			
+			protected function onClick(event:MouseEvent) : void
+			{
+				frameworkDispatcher = FrameworkDispatcher.getInstance();
+				frameworkDispatcher.dispatchEvent( new FrameworkEvent( FrameworkEvent.WORD_SELECT, data ) );
+			}
+			
+			// #################################
+			// ##  View
+			// #################################
+			/**
+			 * Commit any change to the word item data. 
+			 * 
+			 * Update any view element that displays word item information.  
+			 */
+			/* :NOTE: invalidate/commit is a way to achieve binding but in a more lightweight fashion */
+			private function commitData():void
+			{
+				// let's not refresh the view until all elements are on stage
+				if(!definitionArea || !wordLabel || !indiceLabel || !indiceBox) { return; }
+
+				// let's refresh the view only after data changed. 
+				if(dataChanged = false) { return; } 
+				dataChanged = false;
+
+				var item:WordItem = (data as WordItem);
+				// definitionArea
+				StyleableTextField(definitionArea.textDisplay).htmlText = item.toHtml(item.definitionShort);
+				definitionArea.scrollToRange(0,0);
+				// wordLabel
+				wordLabel.text =item.displayName;
+				// indiceBox and label
+				indiceBox.visible = item.indice && item.indice.length ? true : false;
+				indiceLabel.text = item.indice;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+	</fx:Declarations>
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor id="rowBackgound" color="#FF0000" />
+			</s:fill>
+		</s:Rect>
+	
+		<s:Label 
+			id="wordLabel" 
+			top="15" 
+			left="20" right="64" 
+			maxDisplayedLines="1" 
+			fontSize="16"
+			creationComplete="commitData()"
+		/>
+		<s:TextArea 
+			id="definitionArea"
+			top="33" bottom="3" left="12" right="64" 
+			creationComplete="onDefinitionAreaComplete();" 
+			borderVisible="false" 
+			fontSize="11" color="#808080" 
+			verticalAlign="top" 
+			editable="false" selectable="true" 
+		/>
+	
+	<s:Group 
+		id="indiceBox" 
+		width="30" height="24" top="33" right="21"
+		>
+		<s:Rect top="0" bottom="0" right="0" left="0" >
+			<s:stroke>
+				<s:SolidColorStroke color="#DDDDDD" />
+			</s:stroke>
+			<s:fill>
+				<s:SolidColor color="#FFFFFF" />
+			</s:fill>
+		</s:Rect>
+		<s:Rect top="3" bottom="3" left="3" right="3">
+			<s:fill>
+				<s:SolidColor color="#F2F2F2" />
+			</s:fill>
+		</s:Rect>
+		<s:Label 
+			id="indiceLabel" 
+			verticalCenter="0" horizontalCenter="0" 
+			creationComplete="commitData()"
+			color="#808080" fontSize="12"
+			/>
+	</s:Group>
+	
+	
+	<!--
+	<s:Line bottom="1" left="0" right="0">
+		<s:stroke>
+			<s:SolidColorStroke color="#CFCFCF"	weight="1" alpha="1"/>
+		</s:stroke>
+	</s:Line>
+	<s:Line bottom="0" left="0" right="0">
+		<s:stroke>
+			<s:SolidColorStroke color="#EFEFEF"	weight="1" alpha="1"/>
+		</s:stroke>
+	</s:Line>
+-->	
+</s:ItemRenderer>

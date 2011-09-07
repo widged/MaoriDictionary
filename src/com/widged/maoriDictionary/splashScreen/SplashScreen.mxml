@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		title="Maori Dictionary" xmlns:splashScreen="com.widged.maoriDictionary.splashScreen.*"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
+			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
+			
+			import mx.events.TouchInteractionEvent;
+			
+			protected function onTouchInteractionStart(event:Event):void
+			{
+				var frameworkDispatcher:FrameworkDispatcher = FrameworkDispatcher.getInstance();
+				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.SPLASH_CLOSE));
+			}
+				
+		]]>
+	</fx:Script>
+
+	<!-- book effect based on http://www.webdesign.org/photoshop/drawing-techniques/open-book.15477.html -->
+	<s:Rect top="0" bottom="0" left="0" right="0">
+		<s:fill>
+			<s:SolidColor color="#483828" />
+		</s:fill>
+	</s:Rect>
+	
+	<splashScreen:OpenBook verticalCenter="0" height="400" left="0" right="18" />
+	
+	
+	<s:VGroup horizontalAlign="center" horizontalCenter="0" verticalCenter="-9" contentBackgroundAlpha="0">
+		<s:Label fontSize="28"><s:text>A Dictionary</s:text></s:Label>
+		<s:Label fontSize="14"><s:text>of the</s:text></s:Label>
+		<s:Label fontSize="28"><s:text>Maori Language</s:text></s:Label>
+		<s:Rect height="21" />
+		<s:Label fontSize="14"><s:text>by</s:text></s:Label>
+		<s:Label fontSize="18"><s:text>Herbert W. Williams, M.A.</s:text></s:Label>
+		<s:Rect height="39" />
+		<s:Label fontSize="12"><s:text>Sixth Edition</s:text></s:Label>
+		<s:Label fontSize="12"><s:text>1957</s:text></s:Label>
+		<s:Rect height="9" />
+		<s:Button label="Enter"  touchInteractionStart="onTouchInteractionStart(event)" click="onTouchInteractionStart(event)" />
+	</s:VGroup>
+</s:View>

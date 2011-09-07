@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		title="WordListing" 
+		viewDeactivate="onDeactivate(event)"
+		dataChange="onDataChange()" xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
+>
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:navigationContent>
+		<s:Button icon="@Embed('embed/pix/icon_information.png')"  
+				  click="navigator.popToFirstView()"/>
+	</s:navigationContent>	
+	<s:titleContent>
+		<s:TextInput id="key" width="100%"/>
+	</s:titleContent>
+	<s:actionContent>
+		<s:Button icon="@Embed('embed/pix/icon_magnify_glass.png')"  
+				  click="onSearchClick()" /> 
+	</s:actionContent>		
+	<fx:Script>
+		<![CDATA[
+			import com.widged.events.DataObjectEvent;
+			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
+			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
+			
+			import mx.collections.ArrayList;
+			
+			import spark.events.ViewNavigatorEvent;
+
+			// central event bus
+			private var frameworkDispatcher : FrameworkDispatcher;
+			// data binding
+			private var dataChanged:Boolean = false;
+
+			// #################################
+			// ##   Events, Interaction
+			// #################################
+			
+			private function onDataChange():void
+			{
+				dataChanged = true;
+				commitList();
+			}
+
+			private function onDeactivate(event:ViewNavigatorEvent):void
+			{
+				data.vscroll = listing.scroller.verticalScrollBar.value; 
+				letterScroller.removeEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
+			}
+			
+			private function onSearchClick():void
+			{
+				frameworkDispatcher ||= FrameworkDispatcher.getInstance();
+				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.DICTIONARY_SEARCH, {key: key.text}));
+			}
+			
+			private function onLetterPointerChange(event:DataObjectEvent):void
+			{
+				data.letter = event.data.letter;
+				frameworkDispatcher ||= FrameworkDispatcher.getInstance();
+				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.LETTER_POINTER_CHANGE, {letter: data.letter}));
+			}
+			
+			// #################################
+			// ##  View
+			// #################################
+			
+			private function commitList():void
+			{
+				if(!listing) { return; }
+				if(!dataChanged) { return; }
+				dataChanged = false;
+				listing.dataProvider  = data ? data.arrayList as ArrayList : null;;
+			}
+
+			private function commitScroll():void
+			{
+				if(!listing) { return; }
+				listing.scroller.verticalScrollBar.value = data ? data.vscroll as int : 0;
+			}
+			
+			private function commitLetterPointer():void
+			{
+				letterScroller.selectedLetter = data.letter ? data.letter : 'A'; 
+				letterScroller.addEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:List id="listing" 
+			top="30" bottom="0" left="0" right="0" 
+			itemRenderer="com.widged.maoriDictionary.word.renderers.WordRenderer" 
+			useVirtualLayout="true" 
+			initialize="commitList();" creationComplete="commitScroll();" 
+	/>
+	<azScroller:ScrollerAZ
+		id="letterScroller"
+		height="36" top="0" left="0" right="0" backgroundAlpha="0" creationComplete="commitLetterPointer()" 
+		/>
+	
+</s:View>
