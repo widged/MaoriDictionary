@@ -9,7 +9,7 @@
 	</fx:Declarations>
 	<fx:Script>
 		<![CDATA[
-			import com.widged.maoriDictionary.framework.FrameworkConstants;
+			import com.widged.maoriDictionary.word.vo.WordStyle;
 			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
 			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
 			import com.widged.maoriDictionary.word.vo.WordItem;
@@ -28,7 +28,7 @@
 			
 			private function onDefinitionAreaComplete() : void
 			{
-				StyleableTextField(definitionArea.textDisplay).styleSheet=FrameworkConstants.css;
+				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
 				commitData();
 			}
 			
@@ -40,7 +40,6 @@
 
 			private function onClose():void
 			{
-				trace('[WordView.onClose]')
 				frameworkDispatcher = FrameworkDispatcher.getInstance();
 				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.WORD_CLOSE));
 			}
@@ -61,9 +60,17 @@
 				// don't change the view if the data haven't changed
 				if(!dataChanged) {return;}
 				// refresh
-				var item:WordItem    = data as WordItem;
-				wordLabel.text       = item.displayName;
-				StyleableTextField(definitionArea.textDisplay).htmlText = item.toHtml(item.definition);
+				if(data)
+				{
+					var item:WordItem    = data as WordItem;
+					wordLabel.text       = item.displayName;
+					StyleableTextField(definitionArea.textDisplay).htmlText = item.toHtml(item.definition);
+				}
+				else
+				{
+					wordLabel.text       = "";
+					StyleableTextField(definitionArea.textDisplay).htmlText = "";
+				}
 			}
 			
 		]]>

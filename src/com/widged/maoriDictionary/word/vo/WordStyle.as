@@ -1,10 +1,10 @@
-package com.widged.maoriDictionary.framework
+package com.widged.maoriDictionary.word.vo
 {
 	import flash.text.StyleSheet;
 
-	public class FrameworkConstants
+	public class WordStyle
 	{
-		public function FrameworkConstants()
+		public function WordStyle()
 		{
 		}
 		
@@ -12,7 +12,7 @@ package com.widged.maoriDictionary.framework
 		{
 			var ss : StyleSheet;
 			ss = new StyleSheet();
-			ss.setStyle(".maori", {color : "#6F9844"});
+			ss.setStyle(".maori", {color : "#498900"}); // #6F9844
 			return ss;
 		}
 	}

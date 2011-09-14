@@ -10,7 +10,7 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.widged.maoriDictionary.framework.FrameworkConstants;
+			import com.widged.maoriDictionary.word.vo.WordStyle;
 			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
 			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
 			import com.widged.maoriDictionary.word.vo.WordItem;
@@ -29,13 +29,11 @@
 			protected function onCreationComplete() : void
 			{
 				addEventListener(MouseEvent.CLICK, onClick, true);
-				rowBackgound.color = itemIndex % 2 ? 0xFFFFFF : 0xEFEFEF;
-				definitionArea.setStyle("contentBackgroundColor", rowBackgound.color);
 			}
 
 			private function onDefinitionAreaComplete() : void
 			{
-				StyleableTextField(definitionArea.textDisplay).styleSheet=FrameworkConstants.css;
+				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
 				commitData();
 			}
 			
@@ -48,7 +46,7 @@
 			protected function onClick(event:MouseEvent) : void
 			{
 				frameworkDispatcher = FrameworkDispatcher.getInstance();
-				frameworkDispatcher.dispatchEvent( new FrameworkEvent( FrameworkEvent.WORD_SELECT, data ) );
+				frameworkDispatcher.dispatchEvent( new FrameworkEvent( FrameworkEvent.WORD_SELECT, data.wordItem ) );
 			}
 			
 			// #################################
@@ -69,8 +67,11 @@
 				if(dataChanged = false) { return; } 
 				dataChanged = false;
 
-				var item:WordItem = (data as WordItem);
+				var item:WordItem = new WordItem(data.word, data.wid, data.indice, data.definition);
+				data.wordItem = item;
 				// definitionArea
+				rowBackgound.color = itemIndex % 2 ? 0xFFFFFF : 0xEFEFEF;
+				definitionArea.setStyle("contentBackgroundColor", rowBackgound.color);
 				StyleableTextField(definitionArea.textDisplay).htmlText = item.toHtml(item.definitionShort);
 				definitionArea.scrollToRange(0,0);
 				// wordLabel

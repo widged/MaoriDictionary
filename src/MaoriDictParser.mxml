@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:textParser="com.widged.data.textParser.*" xmlns:widgets="com.widged.io.fileStream.widgets.*"
+			   >
+	<fx:Script>
+		<![CDATA[
+			import com.widged.maoriDictionary.dictionary.parser.ParserController;
+			import com.widged.events.PlayerEvent;
+			
+			import mx.events.FlexEvent;
+			
+			import org.osmf.events.PlayEvent;
+			
+			private function onParserInitialize(event:FlexEvent):void
+			{
+				var controller:ParserController = new ParserController();
+				var player:TextStreamPlayer = event.target as TextStreamPlayer;
+				player.addEventListener(PlayerEvent.START, onStart);
+				
+				function onStart(event:PlayerEvent):void
+				{
+					player.removeEventListener( PlayerEvent.START, onStart );
+					player.addEventListener   ( PlayerEvent.STOP,  onStop  );
+					
+					var file:File = player.file;
+					if(!file) { trace("no file!"); return; }
+					
+					controller.processFile(file);
+				}
+				
+				function onStop(event:PlayerEvent):void
+				{
+					player.addEventListener   ( PlayerEvent.START, onStart );
+					player.removeEventListener( PlayerEvent.STOP,  onStop  );
+					controller.stop();
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:VGroup top="9" bottom="9" left="9" right="9">
+		<s:Label text="Williams Dictionary XML Parser" styleName="h1" />
+		<widgets:TextStreamPlayer initialize="onParserInitialize(event)" left="0" right="0"/>
+	</s:VGroup>
+</s:Application>

@@ -12,7 +12,7 @@
 	</fx:Declarations>
 	<s:navigationContent>
 		<s:Button icon="@Embed('embed/pix/icon_information.png')"  
-				  click="navigator.popToFirstView()"/>
+				  click="onInfoClick();"/>
 	</s:navigationContent>	
 	<s:titleContent>
 		<s:TextInput id="key" width="100%"/>
@@ -24,6 +24,9 @@
 	<fx:Script>
 		<![CDATA[
 			import com.widged.events.DataObjectEvent;
+			import com.widged.io.events.ProviderErrorEvent;
+			import com.widged.io.events.ProviderResultEvent;
+			import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider;
 			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
 			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
 			
@@ -33,6 +36,8 @@
 
 			// central event bus
 			private var frameworkDispatcher : FrameworkDispatcher;
+			// helpers
+			private var dictionary:DictionaryProvider;
 			// data binding
 			private var dataChanged:Boolean = false;
 
@@ -43,26 +48,64 @@
 			private function onDataChange():void
 			{
 				dataChanged = true;
-				commitList();
+				dictionary = data ?  data.dictionary : null;
+				if(dictionary)
+				{
+					dictionary.addEventListener(ProviderResultEvent.RESULT, onProviderResult);
+					dictionary.addEventListener(ProviderErrorEvent.FAULT,  onProviderFault);
+				}
+				if(!data.arrayList) {
+					loadLetterData(); 
+				} 
+				else
+				{
+					commitList();
+				}
+				commitLetter();
 			}
 
 			private function onDeactivate(event:ViewNavigatorEvent):void
 			{
 				data.vscroll = listing.scroller.verticalScrollBar.value; 
 				letterScroller.removeEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
+				dictionary.removeEventListener(ProviderResultEvent.RESULT, onProviderResult);
+				dictionary.removeEventListener(ProviderErrorEvent.FAULT,  onProviderFault);
 			}
+			
+			private function onInfoClick():void
+			{
+				frameworkDispatcher ||= FrameworkDispatcher.getInstance();	
+				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.INFO_SELECT));
+			}
+			
 			
 			private function onSearchClick():void
 			{
-				frameworkDispatcher ||= FrameworkDispatcher.getInstance();
-				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.DICTIONARY_SEARCH, {key: key.text}));
+				// search provider for  key.text
+				if(!dictionary) { return; }
+				data.arrayList = null;
+				dictionary.listWordsForSearchKey(key.text);
 			}
 			
 			private function onLetterPointerChange(event:DataObjectEvent):void
 			{
+				data.arrayList = null;
 				data.letter = event.data.letter;
-				frameworkDispatcher ||= FrameworkDispatcher.getInstance();
-				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.LETTER_POINTER_CHANGE, {letter: data.letter}));
+				commitLetter();
+				loadLetterData(); 
+			}
+			
+			private function onProviderResult(event:ProviderResultEvent):void
+			{
+				var list:Array = event.result;
+				data.arrayList = new ArrayList(list);
+				dataChanged = true;
+				commitList();
+			}
+			
+			private function onProviderFault(event:ProviderErrorEvent):void
+			{
+				trace("[ListingView.onProviderFault]", event.msg);
 			}
 			
 			// #################################
@@ -83,9 +126,18 @@
 				listing.scroller.verticalScrollBar.value = data ? data.vscroll as int : 0;
 			}
 			
-			private function commitLetterPointer():void
+			private function loadLetterData():void
 			{
-				letterScroller.selectedLetter = data.letter ? data.letter : 'A'; 
+				if(!data.letter) { data.letter = ScrollerAZ.FIRST_LETTER; }
+				if(!dictionary) { return; }
+				dictionary.listWordsForLetter(data.letter);
+			}
+			
+			
+			private function commitLetter():void
+			{
+				if(!letterScroller) { return; }
+				letterScroller.selectedLetter = data.letter; 
 				letterScroller.addEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
 			}
 			
@@ -101,7 +153,7 @@
 	/>
 	<azScroller:ScrollerAZ
 		id="letterScroller"
-		height="36" top="0" left="0" right="0" backgroundAlpha="0" creationComplete="commitLetterPointer()" 
+		height="36" top="0" left="0" right="0" backgroundAlpha="0" creationComplete="commitLetter()" 
 		/>
 	
 </s:View>

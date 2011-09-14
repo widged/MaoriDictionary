@@ -15,14 +15,14 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>MaoriDictTablet</id>
+	<id>MaoriDictParser</id>
 
 	<!-- Used as the filename for the application. Required. -->
-	<filename>MaoriDictTablet</filename>
+	<filename>MaoriDictParser</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<name>MaoriDictTablet</name>
+	<name>MaoriDictParser</name>
 	
 	<!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade. 
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -106,8 +106,8 @@
 		<!-- Whether or not to pan when a soft keyboard is raised or lowered (either "pan" or "none").  Optional.  Defaults "pan." -->
 		<!-- <softKeyboardBehavior></softKeyboardBehavior> -->
 	<autoOrients>true</autoOrients>
-        <fullScreen>true</fullScreen>
-        <visible>true</visible>
+        <fullScreen>false</fullScreen>
+        <visible>false</visible>
         <softKeyboardBehavior>none</softKeyboardBehavior>
     </initialWindow>
 
@@ -222,12 +222,10 @@
         <manifestAdditions><![CDATA[
 			<manifest android:installLocation="auto">
 			    <!--See the Adobe AIR documentation for more information about setting Google Android permissions-->
-             <!-- ## ON ## -->
 			    <!--Removing the permission android.permission.INTERNET will have the side effect
 					of preventing you from debugging your application on your device-->
 			    <uses-permission android:name="android.permission.INTERNET"/>
 			    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-			    <!-- ## OFF ## -->
 			    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
 			    <!--<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>-->
 			    <!--The DISABLE_KEYGUARD and WAKE_LOCK permissions should be toggled together

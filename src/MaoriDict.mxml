@@ -23,7 +23,7 @@
 			private function onCreactionComplete():void
 			{
 				controller.viewNavigator = navigator;
-				controller.showListing();
+				// controller.showListing('A');
 			}
 				
 		]]>
