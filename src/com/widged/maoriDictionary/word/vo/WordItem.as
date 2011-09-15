@@ -21,6 +21,10 @@ package com.widged.maoriDictionary.word.vo
 		private function toShort(str:String):String
 		{
 			var l:int = str.length;
+			str = str.replace(/<br\/>/g, " ");
+			str = str.replace(/[\r\n]+/g, " ");
+			str = str.replace(/\s+/g, " ");
+			str = str.replace(/\-\-+/g, "");
 			str = str.substr(0, 90);
 			if (str.length < l) 
 			{
@@ -32,12 +36,13 @@ package com.widged.maoriDictionary.word.vo
 			return str;
 		}
 		
-		private static var maoriTag:RegExp = new RegExp('<m>(.+?)<\/m>', "g");
 		public function toHtml(str:String):String
 		{
-			str = str.replace(maoriTag, "<span class='maori'>$1</span>");
+			str = str.replace(/<m>(.+?)<\/m>/g, "<span class='maori'>$1</span>");
+			str = str.replace(/<f>(.+?)<\/f>/g, "<span class='function'>$1</span>");
 			// add any missing closing tag
 			str = str.replace(/<m>(.+)$/, "<span class='maori'>$1</span>");
+			str = str.replace(/<f>(.+)$/, "<span class='fct'>$1</span>");
 			return str;
 		}
 		

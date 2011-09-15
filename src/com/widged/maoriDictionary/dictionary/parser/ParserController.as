@@ -3,6 +3,7 @@ package com.widged.maoriDictionary.dictionary.parser
 	import com.widged.data.textEncoder.ITextEncoder;
 	import com.widged.data.textEncoder.type.JsonEncoder;
 	import com.widged.data.textEncoder.type.SqliteEncoder;
+	import com.widged.data.textEncoder.type.TabsEncoder;
 	import com.widged.data.textParser.ILineParser;
 	import com.widged.data.textParser.ParserColumn;
 	import com.widged.data.textParser.events.LineParserEvent;
@@ -24,7 +25,8 @@ package com.widged.maoriDictionary.dictionary.parser
 		{
 		}
 		
-		public static const PROGRESS_STEP:int = 1000;
+		public static const PROGRESS_STEP:int = 5000;
+		public static const STOP_STEP:int = Number.POSITIVE_INFINITY;
 		
 		private var _exportAsText:Boolean    = false;
 		private var _exportAsFile:Boolean    = false;
@@ -36,6 +38,7 @@ package com.widged.maoriDictionary.dictionary.parser
 		private var _exportFormat:int = SQLITE;
 		private static const SQLITE:int  = 1;
 		private static const JSON:int    = 2;
+		private static const TABS:int    = 3;
 		
 		// helpers		
 		private var parser:ILineParser;
@@ -50,10 +53,7 @@ package com.widged.maoriDictionary.dictionary.parser
 		private var _dbStream:DictionaryEncoder_sqlite;
 		
 
-		public function stop():void
-		{
-			_inputStream.stop();
-		}
+		
 		
 		private var _isRunning:Boolean = false;
 		
@@ -101,13 +101,18 @@ package com.widged.maoriDictionary.dictionary.parser
 			if(_exportAsFile) {
 				_writeStream.close()
 			}
-			stop();
 		}
 		
 		// ###################
 		// ###  InputStream
 		// ####################
-		
+		public function stop():void
+		{
+			_inputStream.stop();
+			_inputStream.close();
+			trace(final)
+			cleanUp();
+		}		
 		private function readInputFile(file:File):void
 		{
 			_inputStream ||= new LineStream();
@@ -123,6 +128,8 @@ package com.widged.maoriDictionary.dictionary.parser
 				var fields:Array = event.data.fields as Array;
 				writeFields(fields);
 			}
+
+				
 			
 			function onLineProgress(event:LineStreamProgress):void
 			{
@@ -130,18 +137,20 @@ package com.widged.maoriDictionary.dictionary.parser
 				if(_inputStream.lineCount % PROGRESS_STEP == 0) {
 					trace(progress)
 				}
+				if(_inputStream.lineCount == STOP_STEP ) {
+					stop();
+				}
 			}
 			
 			function onComplete(event:LineStreamProgress):void 
 			{
 				_inputStream.removeEventListener(LineStreamProgress.LINE_PROGRESS, onLineProgress);
 				_inputStream.removeEventListener(LineStreamProgress.FILE_COMPLETE, onComplete);
-				_inputStream.stop();
-				_inputStream.close();
 				parser.removeEventListener(LineParserEvent.ROW_ADDED, onAddRow);
-				trace(final)
-				cleanUp();
+				stop();
 			}
+			
+					
 		}					
 		// ###################
 		// ###  Parser
@@ -149,7 +158,8 @@ package com.widged.maoriDictionary.dictionary.parser
 		
 		private function initializeParser():void
 		{
-			parser ||= new WilliamDictParser();
+			// parser ||= new WilliamDictParser();
+			parser ||= new WilliamXmlParser();
 			parser.initialize();
 
 		}
@@ -172,6 +182,9 @@ package com.widged.maoriDictionary.dictionary.parser
 			
 			switch(_exportFormat)
 			{
+				case TABS:
+					textEncoder ||= new TabsEncoder();
+					break;
 				case JSON:
 					textEncoder ||= new JsonEncoder();
 					break;
@@ -229,6 +242,7 @@ package com.widged.maoriDictionary.dictionary.parser
 					return;
 				}
 			}		
+			trace(dbFile.nativePath, dbFile.url)
 			
 			_dbStream ||= new DictionaryEncoder_sqlite();
 			_dbStream.addEventListener(ProviderStatusEvent.READY, onReady);

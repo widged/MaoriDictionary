@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="MaoriDictTablet.mxml" projectUUID="b9c97ef7-dc84-479e-bb68-b9b8370e50a8" version="10">
+<actionScriptProperties analytics="false" mainApplicationPath="MaoriDictParser.mxml" projectUUID="b9c97ef7-dc84-479e-bb68-b9b8370e50a8" version="10">
   <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="false" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="true" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" linkType="1" path="data-sqlite"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="data-mock"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="/Users/marielle/Documents/Labs/Flex-libs/widged"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="/Users/marielle/Documents/Labs/Flex-libs/widged-air"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">
@@ -36,7 +37,10 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="MaoriDictTablet.mxml">
+    <application path="MaoriDictParser.mxml">
+      <airExcludes/>
+    </application>
+    <application path="MaoriDict.mxml">
       <airExcludes/>
     </application>
   </applications>
@@ -44,18 +48,22 @@
   <buildCSSFiles/>
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
-    <buildTarget airDownloadURL="" androidSettingsVersion="1" buildTargetName="com.adobe.flexide.multiplatform.android.platform">
-      <airSettings airCertificatePath="" airTimestamp="true" version="1">
-        <airExcludes/>
-      </airSettings>
+    <buildTarget airDownloadURL="https://market.android.com/details?id=com.adobe.air" androidSettingsVersion="1" buildTargetName="com.adobe.flexide.multiplatform.android.platform">
       <multiPlatformSettings enabled="true" includePlatformLibs="false" platformID="com.adobe.flexide.multiplatform.android.platform" version="2"/>
+      <airSettings airCertificatePath="/Users/marielle/Documents/Labs/MixAndMash11/apk/maoriParser.p12" airTimestamp="true" version="1">
+        <airExcludes>
+          <pathEntry path="embed/db/.DS_Store"/>
+          <pathEntry path="etc"/>
+          <pathEntry path="embed/pix"/>
+        </airExcludes>
+      </airSettings>
       <actionScriptSettings version="1"/>
     </buildTarget>
     <buildTarget buildTargetName="default">
+      <multiPlatformSettings enabled="false" includePlatformLibs="false" platformID="default" version="2"/>
       <airSettings airCertificatePath="" airTimestamp="true" version="1">
         <airExcludes/>
       </airSettings>
-      <multiPlatformSettings enabled="false" includePlatformLibs="false" platformID="default" version="2"/>
       <actionScriptSettings version="1"/>
     </buildTarget>
   </buildTargets>

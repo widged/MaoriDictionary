@@ -28,5 +28,10 @@
 			<type>2</type>
 			<location>/Users/marielle/Documents/Labs/Flex-libs/widged</location>
 		</link>
+		<link>
+			<name>[source path] widged-air</name>
+			<type>2</type>
+			<location>/Users/marielle/Documents/Labs/Flex-libs/widged-air</location>
+		</link>
 	</linkedResources>
 </projectDescription>

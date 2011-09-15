@@ -5,8 +5,8 @@
 			   >
 	<fx:Script>
 		<![CDATA[
-			import com.widged.maoriDictionary.dictionary.parser.ParserController;
 			import com.widged.events.PlayerEvent;
+			import com.widged.maoriDictionary.dictionary.parser.ParserController;
 			
 			import mx.events.FlexEvent;
 			
@@ -23,7 +23,8 @@
 					player.removeEventListener( PlayerEvent.START, onStart );
 					player.addEventListener   ( PlayerEvent.STOP,  onStop  );
 					
-					var file:File = player.file;
+					// var file:File = player.file;
+					var file:File = File.applicationDirectory.resolvePath("etc/xml/maori_dict.xml");
 					if(!file) { trace("no file!"); return; }
 					
 					controller.processFile(file);

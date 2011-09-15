@@ -29,6 +29,7 @@
 			private function onDefinitionAreaComplete() : void
 			{
 				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
+				definitionArea.heightInLines = NaN;
 				commitData();
 			}
 			
@@ -65,6 +66,7 @@
 					var item:WordItem    = data as WordItem;
 					wordLabel.text       = item.displayName;
 					StyleableTextField(definitionArea.textDisplay).htmlText = item.toHtml(item.definition);
+					definitionArea.validateNow();
 				}
 				else
 				{
@@ -75,6 +77,7 @@
 			
 		]]>
 	</fx:Script>
+		
 	<s:Label 
 		id="wordLabel"       
 		left="28" right="24"
@@ -82,7 +85,8 @@
 		top="40"  
 		creationComplete="commitData()"
 	/>
-	<s:TextArea 
+		
+		<s:TextArea 
 		id="definitionArea"
 		left="24" right="24"
 		top="72" bottom="102"  
@@ -93,6 +97,7 @@
 		editable="false" selectable="true" 
 		>
 	</s:TextArea>
+
 	<s:Button 
 		label="close" 
 		horizontalCenter="0"

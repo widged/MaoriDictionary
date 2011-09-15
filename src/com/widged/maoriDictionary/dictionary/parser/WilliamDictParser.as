@@ -56,7 +56,7 @@ package com.widged.maoriDictionary.dictionary.parser
 			var unlikelyString:String = "#@µ#@µ#@µ#@µ";
 			_multiLine = _multiLine.replace(/^\s/, "");
 			_multiLine = _multiLine.replace(/\s$/, "");
-			_multiLine = _multiLine.replace(/<p rend="hang">(.*?)<\/p>/g, "<p>$1</p>")
+			_multiLine = _multiLine.replace(/<p rend="hang">(.*?)<\/p>/g, "<p>$1</p>");
 			_multiLine = _multiLine.replace(/<foreign rend="b" xml:lang="mi">(.+?)<\/foreign>/g, "<m>$1</m>");
 			_multiLine = _multiLine.replace(/<foreign xml:lang="mi">(.+?)<\/foreign>/g, "<m>$1</m>");
 			_multiLine = _multiLine.replace(/<name type="organism" subtype="matched">(.+?)<\/name>/g, "<n>$1</n>");			
