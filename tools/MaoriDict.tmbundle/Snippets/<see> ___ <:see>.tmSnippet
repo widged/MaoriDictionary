@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>content</key>
+	<string>&lt;see&gt;&lt;m&gt;$TM_SELECTED_TEXT&lt;/m&gt;&lt;/see&gt;</string>
+	<key>keyEquivalent</key>
+	<string>@S</string>
+	<key>name</key>
+	<string> &lt;see&gt; ... &lt;/see&gt;</string>
+	<key>scope</key>
+	<string>text.xml</string>
+	<key>tabTrigger</key>
+	<string>see</string>
+	<key>uuid</key>
+	<string>46DFCBC0-9AF1-4C1B-8DEA-A18EF01CAD90</string>
+</dict>
+</plist>

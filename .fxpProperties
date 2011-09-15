@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="b9c97ef7-dc84-479e-bb68-b9b8370e50a8" projectUUID="b9c97ef7-dc84-479e-bb68-b9b8370e50a8" pureCatalystProject="false" sdkVersion="4.5.1" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c" version="15">
+  <projects/>
+  <src>
+    <linked isMain="false" location="data-sqlite" path="data-sqlite" position="0" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+    <linked isMain="false" location="data-mock" path="data-mock" position="1" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+    <linked isMain="false" location="widged" path="widged" position="2" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+    <linked isMain="false" location="widged-air" path="widged-air" position="3" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+  </src>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+    <linked location="/libs" path="\libs" position="1" uuid="5448ea14-55a9-44fa-9e60-2d832c0ea03c"/>
+  </swc>
+  <misc/>
+  <theme/>
+  <mxmlFormattingPrefs groupAttributesByState="false" maxLineWidth="0" mxmlAlignAttributes="false" mxmlKeepAttributeValuesOrganized="false"/>
+</fxpProperties>

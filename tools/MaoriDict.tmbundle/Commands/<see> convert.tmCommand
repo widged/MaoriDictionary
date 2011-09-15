@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby -wKU
+line = STDIN.read
+fnd = /^(.*?)\s*[\=]\s*&lt;m&gt;(.*?)&lt;\/m&gt;(\.?)(.*?)$/
+rpl = '\1\3 &lt;see&gt;\2&lt;/see&gt; \4'
+print line.gsub!(fnd, rpl)</string>
+	<key>fallbackInput</key>
+	<string>none</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>~S</string>
+	<key>name</key>
+	<string>&lt;see&gt; convert</string>
+	<key>output</key>
+	<string>replaceSelectedText</string>
+	<key>uuid</key>
+	<string>F3B633D6-0490-499C-9234-FA3361718CBB</string>
+</dict>
+</plist>

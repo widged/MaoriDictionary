@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>xmllint --htmlout --valid - 2&gt;&amp;1|perl -pe 's|^((?:&lt;/?[^&gt;]+&gt;)*)(.*?):(\d+):(.*error.*)|$1&lt;a href="txmt://open?line=$3"&gt;$4&lt;/a&gt;|'</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>keyEquivalent</key>
+	<string>^@v</string>
+	<key>name</key>
+	<string>validate syntax</string>
+	<key>output</key>
+	<string>showAsHTML</string>
+	<key>uuid</key>
+	<string>B60DE7D4-077B-4F5F-AFCE-8EACBC86051C</string>
+</dict>
+</plist>
