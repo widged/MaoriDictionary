@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<comps:ServiceVBox 
+    xmlns:mx="http://www.adobe.com/2006/mxml" 
+    width="100%" height="100%" 
+	xmlns:comps="com.widged.io.service.test.comps.*" 
+>
+    
+    <mx:Script>
+        <![CDATA[
+            import com.adobe.serialization.json.JSON;
+            
+            import flash.events.TimerEvent;
+            import flash.utils.Timer;
+            
+            import mx.rpc.Fault;
+
+            // timer
+            private var _timer:Timer;
+
+            public function showWaiting():void
+            {
+                
+                updateView("Waiting for results....", true);   // resets the view
+            }
+            
+            public function showResult(ws:String, params:String, dataObjects:Object):void
+            {
+                var encodedObjectString:String = JSON.encode(dataObjects);
+                
+                encodedObjectString = encodedObjectString.split(":{").join(":ß");
+                encodedObjectString = encodedObjectString.split("}}},").join("µµµ,");
+                encodedObjectString = encodedObjectString.split("}},").join("µµ,");
+                encodedObjectString = encodedObjectString.split("},").join("µ,");
+                encodedObjectString = encodedObjectString.split("{").join("\n{");
+                encodedObjectString = encodedObjectString.split("}").join("}\n");
+                encodedObjectString = encodedObjectString.split("[").join("\n[");
+                encodedObjectString = encodedObjectString.split("]").join("\n]\n");
+                encodedObjectString = encodedObjectString.split("ß").join("{");
+                encodedObjectString = encodedObjectString.split("µ").join("}");
+                encodedObjectString = encodedObjectString.split("\n\n").join("\n");
+                
+                var resultText:String = '// ' + ws + "\n" + '// ' + params + "\n" + '/* ' + "\n" + encodedObjectString + "\n"+ " */"; // ws + "\n\n" +
+                updateView(resultText, true);
+            }
+
+            public function showFault(ws:String, params:String, data:Object):void
+            {
+                trace(JSON.encode(data.fault))
+                var resultText:String = '// ' + ws + "\n" + '// ' + params + "\n\n" +  "ERROR: " + data.fault.faultString+ "\n\n" + data.fault.faultDetail.toString() ;
+                updateView(resultText, true);
+            }
+            
+            public function updateView(resultText:String, isFinal:Boolean = false):void
+            {
+                if(isFinal && _timer) { _timer.stop(); }
+                
+                resultArea.text = resultText;
+                updateTimerView();
+            }
+
+            public function resetTimer():void
+            {
+                _timer = new Timer(200);
+                _timer.addEventListener("timer", onTimerTick);
+                _timer.start();
+            }
+
+            // Timer
+            private function onTimerTick(event:TimerEvent):void
+            {
+                updateTimerView();
+            }
+            
+            private function updateTimerView():void
+            {
+                if(_timer) { millisecondEllapsedText.text = (_timer.currentCount * _timer.delay).toString(); }
+            }
+            
+        
+        ]]>
+    </mx:Script>
+    <mx:HBox width="100%">
+        <mx:Button label="copy to clipboard" click="System.setClipboard(resultArea.text);" right="0"/>
+        <mx:Spacer width="100%" />
+        <mx:Label text="Delay in milliseconds:" />
+        <mx:Spacer width="20" />
+        <mx:TextInput
+            id="millisecondEllapsedText"
+            width="200"
+            />
+    </mx:HBox>
+    <mx:TextArea
+        id="resultArea"
+        width="100%" height="100%" minHeight="300" 
+        />
+    
+</comps:ServiceVBox>

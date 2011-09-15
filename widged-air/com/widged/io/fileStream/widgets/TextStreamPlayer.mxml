@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.widged.events.PlayerEvent;
+			import com.widged.io.nativeProcess.TextmateUtil;
+			
+			public static const USE_TEXTMATE:Boolean = true;
+			
+			private var _file:File;
+			
+			public function get file():File { return _file; }
+			
+			private function onInputBrowse():void
+			{
+				var fileChooser:File = new File();
+				fileChooser.browseForOpen('Select the input file');
+				fileChooser.addEventListener(Event.SELECT, onInputSelected);
+			}
+			
+			private function onInputSelected(event:Event):void
+			{
+				_file = event.target as File;
+				inputFileField.text = _file.nativePath;
+				fileActionBox.visible = fileActionBox.includeInLayout = USE_TEXTMATE && NativeProcess.isSupported;
+				dispatchEvent(new PlayerEvent(PlayerEvent.LOAD, {file: _file}));
+			}
+			
+			private function onOpenFileInTextmate():void
+			{
+				TextmateUtil.openFileInTextmate(_file);
+			}
+			
+			public function startReading():void
+			{
+				dispatchEvent(new PlayerEvent(PlayerEvent.START, {file: _file} ));
+			}
+			
+			public function stopReading():void
+			{
+				dispatchEvent(new PlayerEvent(PlayerEvent.STOP) );
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Rect top="0" bottom="0" left="0" right="0" radiusX="6" radiusY="6">
+		<s:stroke>
+			<s:SolidColorStroke color="#4d4d4d" weight="2" />
+		</s:stroke>
+	</s:Rect>
+
+	<s:VGroup top="9" bottom="9" left="9" right="9">
+		<s:TextInput id="inputFileField" width="100%" />
+		<s:HGroup width="100%">
+			<s:Button label="Browse" click="onInputBrowse()" />
+			<s:HGroup id="fileActionBox" visible="false" includeInLayout="false">
+				<s:Button label="View in Textmate" click="onOpenFileInTextmate()" />
+			</s:HGroup>
+		</s:HGroup>
+		<s:HGroup>
+			<s:Button label="start" click="startReading()" />
+			<s:Button label="stop" click="stopReading()" />
+		</s:HGroup>
+	</s:VGroup>
+	
+</s:Group>

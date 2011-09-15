@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009"
+             xmlns:s="library://ns.adobe.com/flex/spark">
+    
+    <fx:Script>
+        
+        <![CDATA[
+			import com.widged.media.image.frames.CompletionTick;
+            
+        ]]>
+    </fx:Script>
+    
+    <s:states>
+        <s:State name="up"/>
+        <s:State name="over"/>
+        <s:State name="down"/>
+    </s:states>
+    
+    <s:BitmapImage 
+        source="@Embed('/embed/pix/tickbox/Tickbox-yes.png')"
+        width="16" height="16"
+        visible="{getStyle('status') == CompletionTick.PASSED}" includeInLayout="{getStyle('status') == CompletionTick.PASSED}"   
+        />
+    <s:BitmapImage 
+        source="@Embed('/embed/pix/tickbox/Tickbox-no.png')"
+        width="16" height="16"
+        visible="{getStyle('status') == CompletionTick.FAILED}" includeInLayout="{getStyle('status') == CompletionTick.FAILED}"   
+        />
+    <s:BitmapImage 
+        source="@Embed('/embed/pix/tickbox/Tickbox-plain.png')"
+        width="16" height="16"
+        visible="{getStyle('status') == CompletionTick.NA}" includeInLayout="{getStyle('status') == CompletionTick.NA}"   
+        />
+    
+</s:SparkSkin>

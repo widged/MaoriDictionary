@@ -4,8 +4,8 @@
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" linkType="1" path="data-sqlite"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="data-mock"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="/Users/marielle/Documents/Labs/Flex-libs/widged"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="/Users/marielle/Documents/Labs/Flex-libs/widged-air"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="widged"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="widged-air"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">

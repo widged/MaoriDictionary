@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<comps:CfTestClass 
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:test="com.widged.io.service.test.*"
+    initialize="onInitData();" xmlns:comps="com.widged.io.service.test.comps.*"
+    >
+    <mx:Script>
+        <![CDATA[
+			import com.widged.provider.ProviderEvent;
+            import com.widged.io.service.test.comps.ResultsBox;
+            
+            private var _userId:int;
+            private var _firstName:String;
+            private var _lastName:String;
+            private var _password:String;
+            private var _email:String;
+            private var _isMale:Boolean;
+            private var _roleId:int;
+            private var _accentId:int;
+            private var _languageId:int;
+            
+            /* ####################################
+            Events, Interactivity
+            #################################### */
+            protected function onInitData():void
+            {
+                _userId   = 26;
+                _email    = "teacher@test.com";
+                _password = "demo";
+            }
+            
+            protected function onSubmit():void
+            {
+                resultBox.showWaiting();
+                resultBox.resetTimer();
+                userProvider.addEventListener(ProviderEvent.PROVIDER_FAULT,     onProviderFault);
+                
+            }
+            
+            private function get _params():String 
+            {
+                return "userId: " + _userId;
+            }
+            /* ####################################
+            Params
+            #################################### */
+            
+            private function onUserId(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _userId.toString(10);
+            }
+
+            private function onFirstName(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _firstName;
+            }
+
+            private function onLastName(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _lastName;
+            }
+
+            private function onPassword(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _password;
+            }
+
+            private function onEmail(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _email;
+            }
+
+            private function onRoleId(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _roleId.toString(10);
+            }
+
+            private function onIsMale(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _isMale.toString();
+            }
+            
+            private function onAccentId(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _accentId.toString(10);
+            }
+
+            private function onLanguageId(event:Event):void
+            {
+                var input:TextInput = event.target as TextInput;
+                input.text = _languageId.toString(10);
+            }
+
+
+            /* ####################################
+            Services
+            #################################### */
+
+            private function onProviderFault(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.PROVIDER_FAULT,     onProviderFault);
+                resultBox.showFault("providerFault", _params, event.data.event);  // resultBox.showFault(ws, _params, event.data);
+            }
+
+            // ### listRoles
+            protected function listRoles():void {
+                onSubmit();
+                userProvider.addEventListener(ProviderEvent.ROLE_LIST_RESULT, onListRolesResult);
+                userProvider.listRoles();
+            }
+            
+            private function onListRolesResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.ROLE_LIST_RESULT, onListRolesResult);
+                resultBox.showResult("listRoles", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+            
+            // ### listLanguages
+            protected function listLanguages():void {
+                onSubmit();
+                userProvider.addEventListener(ProviderEvent.LANGUAGE_LIST_RESULT, onListLanguagesResult);
+                userProvider.listNativeLanguages();
+            }
+            
+            private function onListLanguagesResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.LANGUAGE_LIST_RESULT, onListLanguagesResult);
+                resultBox.showResult("listLanguages", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+                        
+            // ### listUsers
+            protected function listUsers():void {
+                onSubmit();
+                userProvider.addEventListener(ProviderEvent.USER_LIST_RESULT, onListUsersResult);
+                userProvider.listUsers();
+            }
+            
+            private function onListUsersResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.USER_LIST_RESULT, onListUsersResult);
+                resultBox.showResult("listUsers", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+
+            // ### deleteUser
+            protected function deleteUser():void {
+                onSubmit();
+                _userId = parseInt(deleteUser_userIdInput.text);
+                userProvider.addEventListener(ProviderEvent.USER_DELETE_RESULT, onDeleteUserResult);
+                userProvider.deleteUser(_userId);
+            }
+            
+            private function onDeleteUserResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.USER_DELETE_RESULT, onDeleteUserResult);
+                resultBox.showResult("deleteUser", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+
+            // ### addUser
+            protected function addUser():void {
+                onSubmit();
+                var userId:int            = parseInt(addUser_userIdInput.text);
+                var isPasswordSet:Boolean = true;
+                _firstName                = addUser_firstNameInput.text;
+                _lastName                 = addUser_lastNameInput.text;
+                _email                    = addUser_emailInput.text;
+                _password                 = addUser_passwordInput.text;
+                _isMale                   = (parseInt(addUser_isMaleInput.text) == 1) ? true : false;
+                _accentId                 = parseInt(addUser_accentIdInput.text);
+                _languageId               = parseInt(addUser_languageIdInput.text);
+
+                userProvider.addEventListener(ProviderEvent.USER_UPDATE_RESULT, onAddUserResult);
+                userProvider.updateUser(userId, _firstName, _lastName, _password, _email, _isMale, _languageId, isPasswordSet);
+            }
+            
+            private function onAddUserResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.USER_UPDATE_RESULT, onAddUserResult);
+                resultBox.showResult("addUser", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+            
+            // ### login
+            protected function login():void {
+                onSubmit();
+                _email                    = addUser_emailInput.text;
+                _password                 = addUser_passwordInput.text;
+                
+                userProvider.addEventListener(ProviderEvent.LOGIN_RESULT, onLoginResult);
+                userProvider.login(_email, _password);
+            }
+            
+            private function onLoginResult(event:ProviderEvent):void 
+            {
+                userProvider.removeEventListener(ProviderEvent.LOGIN_RESULT, onLoginResult);
+                resultBox.showResult("login", _params, event.data.result);  // resultBox.showFault(ws, _params, event.data);
+            };
+            
+        ]]>
+    </mx:Script>
+    
+    <mx:VBox 
+        width="100%" height="100%" 
+        paddingLeft="9" paddingRight="9" paddingTop="9" paddingBottom="9" 
+        >
+        <mx:HBox>
+            <mx:Label text="User Id:"/><mx:TextInput id="userIdInput" width="150" creationComplete="onUserId(event)" />
+            <mx:Label text="Role Id:"/><mx:TextInput id="roleIdInput" width="150" creationComplete="onRoleId(event)" />
+            <mx:Label text="Is Male:"/><mx:TextInput id="maleIdInput" width="150" creationComplete="onIsMale(event)" />
+            <mx:Label text="Accent Id:"/><mx:TextInput id="accentIdInput" width="150" creationComplete="onAccentId(event)" />
+        </mx:HBox>
+        <mx:Spacer height="9" />
+        <mx:HBox width="100%" height="100%">
+            <mx:VBox>
+
+                <!-- list roles -->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="listRoles" click="listRoles()"  width="100%"/>
+                </comps:ServiceVBox>
+                
+                <!-- list native languages -->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="listNativeLanguages" click="listLanguages()"  width="100%"/>
+                </comps:ServiceVBox>
+                
+                <!-- list user -->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="listUsers" click="listUsers()"  width="100%"/>
+                </comps:ServiceVBox>
+
+                <!-- add user -->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="addUser"      click="addUser()"  width="100%"/>
+                    <mx:Form>
+                        <mx:FormItem label="userId:">
+                            <mx:TextInput  id="addUser_userIdInput" width="100" text="-1" editable="false"  />
+                        </mx:FormItem>  
+                        
+                        <mx:FormItem label="roleId:">
+                            <mx:TextInput id="addUser_roleIdInput" width="100" creationComplete="onRoleId(event)" />
+                        </mx:FormItem>  
+
+                        <mx:FormItem label="first name:">
+                            <mx:TextInput id="addUser_firstNameInput" width="100" creationComplete="onFirstName(event)" />
+                        </mx:FormItem>  
+
+                        <mx:FormItem label="last name:">
+                            <mx:TextInput id="addUser_lastNameInput" width="100" creationComplete="onLastName(event)" />
+                        </mx:FormItem>  
+
+                        <mx:FormItem label="password:">
+                            <mx:TextInput id="addUser_passwordInput" width="100" creationComplete="onPassword(event)" />
+                        </mx:FormItem>  
+
+                        <mx:FormItem label="email:">
+                            <mx:TextInput id="addUser_emailInput" width="100" creationComplete="onEmail(event)" />
+                        </mx:FormItem>  
+                        
+                        <mx:FormItem label="isMale:">
+                            <mx:TextInput id="addUser_isMaleInput" width="100" creationComplete="onIsMale(event)" />
+                        </mx:FormItem>  
+
+                        <mx:FormItem label="accentId:">
+                            <mx:TextInput id="addUser_accentIdInput" width="100" creationComplete="onAccentId(event)" />
+                        </mx:FormItem>  
+                        
+                        <mx:FormItem label="nativeLanguageId:">
+                            <mx:TextInput id="addUser_languageIdInput" width="100" creationComplete="onLanguageId(event)" />
+                        </mx:FormItem>  
+                        
+                    </mx:Form>
+                </comps:ServiceVBox>
+
+                <!-- delete user -->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="deleteUser"      click="deleteUser()"  width="100%"/>
+                    <mx:Form>
+                        <mx:FormItem label="userId:">
+                            <mx:TextInput id="deleteUser_userIdInput" width="100" creationComplete="onUserId(event)" />
+                        </mx:FormItem>                     
+                    </mx:Form>
+                </comps:ServiceVBox>
+
+                <!-- login-->
+                <comps:ServiceVBox width="100%">
+                    <mx:Button label="login"      click="login()"  width="100%"/>
+                    <mx:Form>
+                        <mx:FormItem label="email:">
+                            <mx:TextInput id="login_emailInput" width="100" creationComplete="onEmail(event)" />
+                        </mx:FormItem>                     
+                        <mx:FormItem label="password:">
+                            <mx:TextInput id="login_passwordInput" width="100" creationComplete="onPassword(event)" />
+                        </mx:FormItem>                     
+                    </mx:Form>
+                </comps:ServiceVBox>
+                
+                
+            </mx:VBox>
+            <comps:ResultsBox id="resultBox" />
+        </mx:HBox>
+    </mx:VBox>
+    
+</comps:CfTestClass>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Author: Christophe Coenraets, http://coenraets.org -->
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+                xmlns:s="library://ns.adobe.com/flex/spark" 
+                xmlns:mx="library://ns.adobe.com/flex/mx" 
+                xmlns:scoreTick="com.widged.media.imageFrames.scoreTick.*" 
+                xmlns:scorebar="com.widged.media.imageFrames.scorebar.*"
+                xmlns:frames="com.widged.media.image.frames.*" 
+                width="100%" height="28" click="clickHandler()"
+>    
+    <fx:Script>
+        <![CDATA[
+			import com.widged.events.DataObjectEvent;
+			import com.widged.ui.mobileGrid.events.MobileGridEvent;
+            
+            import mx.collections.ArrayCollection;
+            
+            private function clickHandler():void 
+            {
+                dispatchEvent(new DataObjectEvent(MobileGridEvent.ITEM_CLICK,{itemIndex: itemIndex, itemData: data}, true))
+            }            
+            
+            override public function set data(value:Object):void {
+                super.data = value;
+                
+                if ((itemIndex % 2) == 0) {
+                    rectColor.color = 0xF7F7F7;
+                }
+                
+                if(owner as MobileGridBody)
+                {
+                    var columnList:Array = (owner as MobileGridBody).columns;
+                    var cols:Array = [];
+                    for(var i:int = 0; columnList && i< columnList.length; i++)
+                    {
+                        var col:MobileGridColumn = columnList[i] as MobileGridColumn;
+                        if(!col) { continue; }
+                        cols.push({value: data[col.identifier], width: col.width, format: col.format })
+                    }
+                    columnDG.dataProvider = new ArrayCollection(cols)
+                }
+                
+            }        
+            
+            
+        ]]>
+    </fx:Script>
+    
+    <s:Rect id="rect" left="0" right="0" top="0" bottom="0" >
+        <s:fill><s:SolidColor id="rectColor" color="#FFFFFF" alpha="1.0" /></s:fill>
+    </s:Rect>
+    
+    
+    <!-- column separator -->
+    <s:DataGroup id="columnDG"
+                 top="0" left="0" right="0" bottom="0"
+                 >
+        <s:layout>
+            <s:HorizontalLayout paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" gap="0" useVirtualLayout="false"/>
+        </s:layout>
+        <s:itemRenderer>
+            <fx:Component>
+                <s:ItemRenderer autoDrawBackground="false" 
+								dataChange="onDataChange()">
+                    <fx:Script>
+                        <![CDATA[
+                            private var _value:*;
+                            
+                            public function onDataChange():void {
+                                this.width = data.width;
+                                this.maxWidth = data.width;
+                                this.percentHeight = 100;
+                                _value = data.value;
+                                switch(data.format)
+                                {
+                                    case MobileGridColumn.FORMAT_TICK_BOX:
+                                        currentState = "tickbox";
+                                        updateTick();
+                                        break;
+                                    case MobileGridColumn.FORMAT_SCORE_BAR:
+                                        currentState = "scorebar";
+                                        _value = parseInt(_value);
+                                        updateScoreBar();
+                                        break;
+                                    case MobileGridColumn.FORMAT_ROUNDED_VALUE:
+                                        currentState = "label";
+                                        _value = parseInt(_value);
+                                        updateLabel();
+                                        break;
+                                    default:
+                                        currentState = "label"
+                                        updateLabel();
+                                        break;
+                                }
+                            }
+                            
+                            private function updateLabel():void
+                            {
+                                if(!columnLabel) { return; };
+                                columnLabel.maxWidth = this.width;
+                                columnLabel.text = _value;
+                            }
+
+                            private function updateTick():void
+                            {
+                                if(!tickBox) { return; };
+                                tickBox.status = (_value as int);
+                            }
+
+                            private function updateScoreBar():void
+                            {
+                                if(!scorebar) { return; };
+                                scorebar.score = (_value as Number);
+                            }
+                            
+                            
+                        ]]>
+                    </fx:Script>
+                    <s:states>
+                        <s:State name="label" />
+                        <s:State name="tickbox" />
+                        <s:State name="scorebar" />
+                    </s:states>
+                    <s:Label 
+                        id="columnLabel"
+                        left="6"  verticalCenter="0" maxDisplayedLines="1" includeIn="label"
+                        initialize="updateLabel()" show="updateLabel()"
+                        />
+                    <frames:CompletionTick 
+                        id="tickBox"  
+                        horizontalCenter="0" verticalCenter="0" includeIn="tickbox" 
+                        initialize="updateTick()" show="updateTick()"
+                    />
+                    <frames:ProgressBar
+                        id="scorebar"
+                        left="6" verticalCenter="0" includeIn="scorebar" 
+                        initialize="updateScoreBar()" show="updateScoreBar()"
+                        />
+                    
+                </s:ItemRenderer>
+            </fx:Component>
+        </s:itemRenderer>
+    </s:DataGroup>
+    
+    
+    
+</s:ItemRenderer>

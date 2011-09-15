@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer 
+    xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx"
+    autoDrawBackground="false" 
+>
+    
+    <fx:Script>
+        <![CDATA[
+            
+            override public function set data(value:Object):void {
+                super.data = value;
+                this.width = data.width;
+                this.percentHeight = 100;
+            }
+            
+            
+        ]]>
+    </fx:Script>
+    <s:Line top="0" bottom="0">
+        <s:stroke>
+            <s:SolidColorStroke id="colorStroke" color="0xE6E6E6" weight="1" caps="square"/>
+        </s:stroke>
+    </s:Line>
+    
+</s:ItemRenderer>
