@@ -18,7 +18,7 @@
 	<id>MaoriDictionar</id>
 
 	<!-- Used as the filename for the application. Required. -->
-	<filename>MaoriDictionary</filename>
+	<filename>com.widged.maoriDictionary</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
@@ -30,14 +30,14 @@
 	<versionNumber>1</versionNumber>
 		         
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
-	<!-- <versionLabel></versionLabel> -->
+	<versionLabel>v1</versionLabel>
 
 	<!-- Description, displayed in the AIR application installer.
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
-	<!-- <description></description> -->
+	<description>Port to Android of Williams' Dictionary of Maori Language (1957). Dictionary content derived from the text provided by NZETC - http://www.nzetc.org/tm/scholarly/tei-WillDict.html</description> 
 
 	<!-- Copyright information. Optional -->
-	<!-- <copyright></copyright> -->
+	<copyright>Marielle Lange</copyright> -->
 
 	<!-- Publisher ID. Used if you're updating an application created prior to 1.5.3 -->
 	<!-- <publisherID></publisherID> -->
