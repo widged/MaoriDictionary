@@ -7,8 +7,8 @@ package com.widged.maoriDictionary.dictionary.provider
 	{
 		function init():void;
 		function listWords():void;
-		function listWordsForLetter(letter:String, start:int, offset:int):void;
-		function listWordsForSearchKey(key:String, start:int, offset:int):void;
+		function listWordsForLetter(letter:String):void;
+		function listWordsForSearchKey(key:String):void;
 		function countWordsForLetter(letter:String):void;
 		function countWordsForSearchKey(key:String):void;
 		

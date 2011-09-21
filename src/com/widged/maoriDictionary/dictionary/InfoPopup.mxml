@@ -10,10 +10,10 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		<fx:XML id="htmlText"> 
 			<TextFlow xmlns="http://ns.adobe.com/textLayout/2008"> 
-				<![CDATA[<p>Author: <b>Marielle Lange</b></p>
+				<![CDATA[<p>Author: Marielle Lange, <a href="http://widged.com/">widged.com</a></p>
 <p>Dictionary data extracted from <a href="http://www.nzetc.org/tm/scholarly/tei-WillDict.html">A Dictionary of the Maori Language</a>, by Herbert W. Williams, derived from the TEI.xml file obtained from a scan of the book by the <a href="http://www.nzetc.org/tm/scholarly/tei-NZETC-About.html">NZTEC</a> and released under a <i>Creative Commons Attribution-Share Alike 3.0 New Zealand Licence</i>.</p>
 <p>Application icon derived from <a href="http://www.freevector.com/maori-vectors/">Maori Vector Border Pattern</a>, by <a href="http://www.ross.chrystall.co.nz/">Ross Chrystal</a>, released under Creative Commons 3.0 Attribution License.</p>
-<p>Reworked xml and code for this application available on github, <a href="http://github.com/widged/MaoriDictionary">http://github.com/widged/MaoriDictionary</a></i>.</p>
+<p>Reworked xml and code for this application available on github, @ <a href="http://github.com/widged/MaoriDictionary">widged/MaoriDictionary</a></i>.</p>
 				]]>
 			</TextFlow> 
 		</fx:XML> 		
@@ -45,7 +45,6 @@
 			{
 				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.infoCss;
 				definitionArea.heightInLines = NaN;
-				trace(htmlText);
 				StyleableTextField(definitionArea.textDisplay).htmlText = htmlText;
 				definitionArea.validateNow();
 			}

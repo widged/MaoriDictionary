@@ -31,7 +31,7 @@
 			private function onDefinitionAreaComplete() : void
 			{
 				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
-				definitionArea.heightInLines = NaN;
+				definitionArea.scroller.height = definitionArea.height;
 				commitData();
 			}
 			
@@ -84,14 +84,14 @@
 	<s:TextArea 
 		id="definitionArea"
 		left="24" right="24"
-		top="72" bottom="102"  
+		top="72" bottom="102"   
 		creationComplete="onDefinitionAreaComplete();" 
 		borderVisible="false" 
 		fontSize="11" color="#808080" 
 		verticalAlign="top" 
 		editable="false" selectable="true" 
-		>
-	</s:TextArea>
+		/>
+
 	
 	<s:Button 
 		label="close" 

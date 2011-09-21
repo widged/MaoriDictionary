@@ -2,9 +2,9 @@ MaoriDictionary
 =====================================================
 
 Author: Marielle Lange
-Version: 0.1.1
+Version: 1
 
-Copyright 2010 Marielle Lange
+Copyright 2011 Marielle Lange
 Dual licensed under MIT and GPL
 
 Description

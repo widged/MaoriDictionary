@@ -26,8 +26,6 @@ package com.widged.maoriDictionary.word.vo
 			ss = new StyleSheet();
 			ss.setStyle("a:link", {color : "#435F92", display: "inline"}); 
 			ss.setStyle("h2", {color : "#333333", 'fontSize': 12});
-			trace(ObjectUtil.toString(ss));
-			trace("------------");
 			return ss;
 		}
 	

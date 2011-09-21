@@ -32,6 +32,8 @@
 			private function onDefinitionAreaComplete() : void
 			{
 				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
+				// this seems to prevent the textarea from being scrollable
+				definitionArea.heightInLines = NaN;
 				commitData();
 			}
 			
@@ -43,7 +45,6 @@
 			
 			protected function onClick(event:MouseEvent) : void
 			{
-				trace("[WordRenderer.onClick]");
 				dispatchEvent( new WordEvent( WordEvent.WORD_SELECT, data.wordItem, true ) );
 			}
 			

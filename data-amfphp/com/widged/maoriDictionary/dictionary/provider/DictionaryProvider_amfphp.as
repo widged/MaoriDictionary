@@ -27,7 +27,6 @@ package com.widged.maoriDictionary.dictionary.provider
 
 		public function init():void
 		{
-			trace("[AMFPHP.init]");
 			open("http://localhost/maoriDict/amfphp/gateway.php");
 		}
 		
@@ -36,7 +35,6 @@ package com.widged.maoriDictionary.dictionary.provider
 		 **/
 		public function listWords():void
 		{
-			trace("[AMFPHP.listWords");
 			gateway.call( "MaoriDictionary.listWords", new Responder(listWordsResultHandler, onFault));
 		}	
 		
@@ -46,9 +44,9 @@ package com.widged.maoriDictionary.dictionary.provider
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForLetter(letter:String, start:int, offset:int):void
+		public function listWordsForLetter(letter:String):void
 		{
-			gateway.call( "MaoriDictionary.listWordsForLetter", new Responder(listWordsResultHandler, onFault), letter, start, offset);
+			gateway.call( "MaoriDictionary.listWordsForLetter", new Responder(listWordsResultHandler, onFault), letter);
 		}	
 		
 		/**
@@ -56,14 +54,13 @@ package com.widged.maoriDictionary.dictionary.provider
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForSearchKey(key:String, start:int, offset:int):void
+		public function listWordsForSearchKey(key:String):void
 		{
 			gateway.call( "MaoriDictionary.listWordsForSearchKey", new Responder(listWordsResultHandler, onFault), key);
 		}	
 		
 		public function listWordsResultHandler(result:Array):void
 		{
-			// trace("[Result]", ObjectUtil.toString(result));
 			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, result));
 		}
 		

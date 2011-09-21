@@ -27,23 +27,19 @@ package com.widged.maoriDictionary.dictionary.provider
 		
 		public function init():void
 		{
-			var dbFile:File = getApplicationFile("etc/db/maori_dictionary_0.2.db");
+			if(dbFile) { return; }
+			dbFile = getApplicationFile("etc/db/maori_dictionary_0.2.db");
 			// dbFile.url - app:/etc/db/maori_dictionary_0.1.db
 			// app = /mnt/asec on Android
 			openAsyncConnection(dbFile);
 		}
-		
-		private function addCursor(query:String, start:int, offset:int):String
-		{
-			return query + " LIMIT :start,:offset";			
-		}
-			
 		
 		/**
 		 * Get the list of words from the database. 
 		 **/
 		public function listWords():void
 		{
+			init();
 			var statement:SQLStatement = toStatement(GET_WORDS);
 			executeStatement(statement, listWordsResultHandler);
 		}	
@@ -53,13 +49,11 @@ package com.widged.maoriDictionary.dictionary.provider
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForLetter(letter:String, start:int, offset:int):void
+		public function listWordsForLetter(letter:String):void
 		{
-			var query:String = addCursor(GET_WORDS_FOR_LETTER, start, offset);
-			var statement:SQLStatement = toStatement(query);
+			init();
+			var statement:SQLStatement = toStatement(GET_WORDS_FOR_LETTER);
 			statement.parameters[":letter"] = letter;
-			statement.parameters[":start"] = start;
-			statement.parameters[":offset"] = offset;
 			executeStatement(statement, listWordsResultHandler);
 		}	
 
@@ -68,8 +62,9 @@ package com.widged.maoriDictionary.dictionary.provider
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForSearchKey(key:String, start:int, offset:int):void
+		public function listWordsForSearchKey(key:String):void
 		{
+			init();
 			var statement:SQLStatement = toStatement(GET_WORDS_FOR_SEARCHKEY);
 			statement.parameters[":key"] = "%" + key + "%";
 			executeStatement(statement, listWordsResultHandler);
@@ -82,6 +77,7 @@ package com.widged.maoriDictionary.dictionary.provider
 		 **/
 		public function countWordsForLetter(letter:String):void
 		{
+			init();
 			var statement:SQLStatement = toStatement(COUNT_WORDS_FOR_LETTER);
 			statement.parameters[":letter"] = letter;
 			executeStatement(statement, countWordsResultHandler);
@@ -94,6 +90,7 @@ package com.widged.maoriDictionary.dictionary.provider
 		 **/
 		public function countWordsForSearchKey(key:String):void
 		{
+			init();
 			var statement:SQLStatement = toStatement(COUNT_WORDS_FOR_SEARCHKEY);
 			statement.parameters[":key"] = "%" + key + "%";
 			executeStatement(statement, listWordsResultHandler);
