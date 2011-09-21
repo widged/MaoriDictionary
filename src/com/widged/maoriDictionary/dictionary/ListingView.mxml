@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		xmlns:s="library://ns.adobe.com/flex/spark" 
-		title="WordListing" 
-		viewDeactivate="onDeactivate(event)"
-		dataChange="onDataChange()" 
-		xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
+<dictionary:ListinViewClass 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
+	xmlns:dictionary="com.widged.maoriDictionary.dictionary.*" 
+	title="WordListing" 
+	viewDeactivate="onDeactivate(event)"
+	dataChange="onDataChange()" 
 >
-	
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
-	<s:navigationContent>
+	<dictionary:navigationContent>
 		<s:Button icon="@Embed('embed/pix/icon_information.png')"  
-				  click="onInfoClick();"/>
-	</s:navigationContent>	
-	<s:titleContent>
+				  click="onInfoClick(event);"
+		/>
+	</dictionary:navigationContent>	
+	<dictionary:titleContent>
 		<s:TextInput id="key" width="100%"/>
-	</s:titleContent>
-	<s:actionContent>
+	</dictionary:titleContent>
+	<dictionary:actionContent>
 		<s:Button icon="@Embed('embed/pix/icon_magnify_glass.png')"  
 				  click="onSearchClick()" /> 
-	</s:actionContent>		
+	</dictionary:actionContent>		
 	<fx:Script>
 		<![CDATA[
-			import com.widged.maoriDictionary.dictionary.vo.MaoriDictionary;
+			import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider;
 			import com.widged.events.DataObjectEvent;
 			import com.widged.io.events.ProviderErrorEvent;
 			import com.widged.io.events.ProviderResultEvent;
@@ -41,7 +43,7 @@
 			// central event bus
 			private var frameworkDispatcher : FrameworkDispatcher;
 			// helpers
-			private var dictionary:MaoriDictionary;
+			private var dictionary:DictionaryProvider;
 			// data binding
 			private var dataChanged:Boolean = false;
 
@@ -77,13 +79,6 @@
 				dictionary.removeEventListener(ProviderResultEvent.RESULT, onProviderResult);
 				dictionary.removeEventListener(ProviderErrorEvent.FAULT,  onProviderFault);
 			}
-			
-			private function onInfoClick():void
-			{
-				frameworkDispatcher ||= FrameworkDispatcher.getInstance();	
-				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.INFO_SELECT));
-			}
-			
 			
 			private function onSearchClick():void
 			{
@@ -138,7 +133,7 @@
 			{
 				if(!data.letter) { data.letter = ScrollerAZ.FIRST_LETTER; }
 				if(!dictionary) { return; }
-				dictionary.listWordsForLetter(data.letter, 0);
+				dictionary.listWordsForLetter(data.letter);
 			}
 			
 			
@@ -149,30 +144,7 @@
 				letterScroller.addEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
 			}
 
-			// #################################
-			// ##  Word selection
-			// #################################
-			
-			private var wordPopup:WordPopup;
-			private function onWordSelection(event:WordEvent):void
-			{
-				trace("[ListingView.onWordSelection]");
-				event.stopPropagation();
-				wordPopup = new WordPopup();
-				wordPopup.height = this.height;
-				wordPopup.width = this.width;
-				wordPopup.item = event.data as WordItem;
-				wordPopup.addEventListener(WordEvent.WORD_CLOSE, onWordClose);
-				// wordPopup.open(this, true);
-				this.addElement(wordPopup);
-			}
-			
-			private function onWordClose(event:WordEvent):void
-			{
-				removeEventListener(WordEvent.WORD_CLOSE, onWordClose);
-				wordPopup.visible = wordPopup.includeInLayout = false;
-			}				
-			
+
 		]]>
 	</fx:Script>
 	
@@ -187,4 +159,4 @@
 		height="36" top="0" left="0" right="0" backgroundAlpha="0" creationComplete="commitLetter()" 
 		/>
 	
-</s:View>
+</dictionary:ListinViewClass>

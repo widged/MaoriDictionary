@@ -25,13 +25,13 @@ package com.widged.maoriDictionary.dictionary.provider
 			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList));
 		}	
 		
-		public function listWordsForLetter(letter:String, start:int, offset:int):void
+		public function listWordsForLetter(letter:String):void
 		{
 			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList));
 		}	
 		
 		
-		public function listWordsForSearchKey(key:String, start:int, offset:int):void
+		public function listWordsForSearchKey(key:String):void
 		{
 			//
 		}

@@ -135,7 +135,12 @@
 		<image114x114></image114x114>
 		<image128x128></image128x128>
 	</icon> -->
-
+	<icon>
+      <image32x32>etc/pix/icon_32.png</image32x32>
+      <image48x48>etc/pix/icon_48.png</image48x48>
+      <image72x72>etc/pix/icon_72.png</image72x72>
+      <image128x128>etc/pix/icon_128.png</image128x128>
+   </icon>
 	<!-- Whether the application handles the update when a user double-clicks an update version
 	of the AIR file (true), or the default AIR application installer handles the update (false).
 	Optional. Default false. -->

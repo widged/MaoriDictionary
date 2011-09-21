@@ -2,7 +2,8 @@ package com.widged.maoriDictionary.framework
 {
 	import com.widged.io.events.ProviderStatusEvent;
 	import com.widged.maoriDictionary.azScroller.ScrollerAZ;
-	import com.widged.maoriDictionary.dictionary.vo.MaoriDictionary;
+	import com.widged.maoriDictionary.dictionary.ListingView;
+	import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider;
 	
 	import mx.collections.ArrayList;
 	
@@ -47,7 +48,7 @@ package com.widged.maoriDictionary.framework
 		// ##   Initialize
 		// #################################
 
-		private var dictionary:MaoriDictionary;
+		private var dictionary:DictionaryProvider;
 		public function initialize():void
 		{
 			initializeDictionary();
@@ -67,7 +68,7 @@ package com.widged.maoriDictionary.framework
 		private var _hasDictionaryProvider:Boolean = false;
 		private function initializeDictionary():void
 		{
-			dictionary  = new MaoriDictionary();
+			dictionary  = new DictionaryProvider();
 			dictionary.addEventListener(ProviderStatusEvent.READY, onReady);
 			dictionary.init();
 			
@@ -92,7 +93,7 @@ package com.widged.maoriDictionary.framework
 		public function showListing():void
 		{
 			var letter:String = ScrollerAZ.FIRST_LETTER;
-			navigator.pushView(com.widged.maoriDictionary.dictionary.ListingCursorView, {arrayList: null, vscroll: 0, letter: letter, dictionary: dictionary});
+			navigator.pushView(com.widged.maoriDictionary.dictionary.ListingView, {arrayList: null, vscroll: 0, letter: letter, dictionary: dictionary});
 		}
 		
 		

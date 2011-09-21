@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
-		xmlns:s="library://ns.adobe.com/flex/spark" 
-		xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
-		xmlns:word="com.widged.maoriDictionary.word.*" 
-		title="WordListing" 
-		viewDeactivate="onDeactivate(event)" 
-		dataChange="onDataChange()" 
+<dictionary:ListinViewClass
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
+	xmlns:word="com.widged.maoriDictionary.word.*" 
+	xmlns:dictionary="com.widged.maoriDictionary.dictionary.*" 
+	title="WordListing" 
+	viewDeactivate="onDeactivate(event)" 
+	dataChange="onDataChange()" 
 >
 	
 	
@@ -28,11 +30,9 @@
 			import com.widged.events.DataObjectEvent;
 			import com.widged.io.events.ProviderErrorEvent;
 			import com.widged.io.events.ProviderResultEvent;
-			import com.widged.maoriDictionary.dictionary.vo.MaoriDictionary;
+			import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider;
 			import com.widged.maoriDictionary.dictionary.vo.RowsCursor;
-			import com.widged.maoriDictionary.word.WordPopup;
 			import com.widged.maoriDictionary.word.events.WordEvent;
-			import com.widged.maoriDictionary.word.vo.WordItem;
 			
 			import mx.collections.ArrayList;
 			import mx.events.PropertyChangeEvent;
@@ -41,7 +41,7 @@
 			import spark.events.ViewNavigatorEvent;
 			
 			// helpers
-			private var dictionary:MaoriDictionary;
+			private var dictionary:DictionaryProvider;
 			// data binding
 			private var listChanged:Boolean = false;
 
@@ -103,7 +103,8 @@
 				// search provider for  key.text
 				if(!dictionary) { return; }
 				data.arrayList = null;
-				// dictionary.listWordsForSearchKey(key.text);
+				dictionary.addEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
+				dictionary.listWordsForSearchKey(key.text, data.rowCursor);
 			}
 			
 			private function onLetterPointerChange(event:DataObjectEvent):void
@@ -162,16 +163,18 @@
 				dictionary.addEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
 				dictionary.listWordsForLetter(data.letter, data.rowCursor);
 				
-				function onLetterRowsResult(event:ProviderResultEvent):void
-				{
-					dictionary.removeEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
-					var list:Array = event.result;
-					data.arrayList = new ArrayList(list);
-					listChanged = true;
-					commitList();
-				}
 				
 			}
+			
+			private function onLetterRowsResult(event:ProviderResultEvent):void
+			{
+				dictionary.removeEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
+				var list:Array = event.result;
+				data.arrayList = new ArrayList(list);
+				listChanged = true;
+				commitList();
+			}
+
 			
 			private function onProviderFault(event:ProviderErrorEvent):void
 			{
@@ -219,47 +222,7 @@
 				letterScroller.addEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
 			}
 
-			// #################################
-			// ##  Word Details
-			// #################################
-			
-			private var wordPopup:WordPopup;
-			private function onWordSelection(event:WordEvent):void
-			{
-				event.stopPropagation();
-				wordPopup = new WordPopup();
-				wordPopup.item = event.data as WordItem;
-				wordPopup.addEventListener(Event.CLOSE, onWordClose);
-				addElement(wordPopup);
-			}
-			
-			private function onWordClose(event:Event):void
-			{
-				wordPopup.removeEventListener(Event.CLOSE, onWordClose);
-				removeElement(wordPopup);
-				wordPopup = null;
-			}			
-
-			// #################################
-			// ##  Info windows
-			// #################################
-
-			private var infoPopup:InfoPopup;
-			private function onInfoClick(event:Event):void
-			{
-				trace("[ListingCursorView.onInfoSelection]");
-				event.stopPropagation();
-				infoPopup = new InfoPopup();
-				infoPopup.addEventListener(Event.CLOSE, onInfoClose);
-				this.addElement(infoPopup);
-			}
-			
-			private function onInfoClose(event:Event):void
-			{
-				infoPopup.removeEventListener(Event.CLOSE, onInfoClose);
-				removeElement(infoPopup);
-				infoPopup = null;
-			}			
+		
 			
 		]]>
 	</fx:Script>
@@ -308,4 +271,4 @@
 	/>
 	
 	
-</s:View>
+</dictionary:ListinViewClass>

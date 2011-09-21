@@ -49,6 +49,7 @@ package com.widged.io.sqlite
 		 **/
 		protected function openAsyncConnection(dbFile:File):void
 		{
+			trace("[SQLiteDataProvider.openAsyncConnection]");
 			if ( !dbFile.exists )
 			{
 				var msg:String = "Database file not found: " + (dbFile ? dbFile.nativePath : "NULL");
@@ -62,12 +63,14 @@ package com.widged.io.sqlite
 			
 			function onConnOpen(se:SQLEvent):void
 			{
+				trace("[SQLiteDataProvider.onConnOpen]");
 				removeListeners();
 				dispatcher.dispatchEvent(new ProviderStatusEvent(ProviderStatusEvent.READY, "SQL Connection successfully opened. SQLiteProvider:0001"));
 			}
 					
 			function onConnError(see:SQLErrorEvent):void
 			{
+				trace("[SQLiteDataProvider.onConnError]");
 				removeListeners();
 				dispatcher.dispatchEvent(new ProviderErrorEvent(ProviderErrorEvent.FAULT, "SQL Error while attempting to open database. SQLiteProvider:0002"));
 			}
@@ -81,6 +84,7 @@ package com.widged.io.sqlite
 		
 		public function close():void
 		{
+			trace("[SQLiteDataProvider.close]");
 			if(asyncConn) { asyncConn.close(); }
 		}
 		
