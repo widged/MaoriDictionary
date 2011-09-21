@@ -2,6 +2,7 @@ package com.widged.maoriDictionary.dictionary.provider
 {
 	import com.widged.io.events.ProviderResultEvent;
 	import com.widged.io.sqlite.SQLiteDataProvider;
+	import com.widged.maoriDictionary.dictionary.vo.RowsCursor;
 	
 	import flash.data.SQLConnection;
 	import flash.data.SQLStatement;
@@ -19,38 +20,31 @@ package com.widged.maoriDictionary.dictionary.provider
 		
 		public function init():void { }
 		
-		/**
-		 * Get the list of words from the database. 
-		 **/
 		public function listWords():void
 		{
 			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList));
 		}	
 		
-		/**
-		 * Get the list of words starting with a given letter from the database. 
-		 * 
-		 * @param letter String
-		 **/
-		public function listWordsForLetter(letter:String):void
+		public function listWordsForLetter(letter:String, start:int, offset:int):void
 		{
+			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList));
 		}	
 		
-		/**
-		 * Gets the number of completed surveys from the surveys table 
-		 * 		 
-		 * @param args Array [responder:DatabaseRespodner]
-		 **/
+		
+		public function listWordsForSearchKey(key:String, start:int, offset:int):void
+		{
+			//
+		}
+
 		public function countWordsForLetter(letter:String):void
 		{
 			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList.length));
 		}
-		
-		public function listWordsForSearchKey(key:String):void
+
+		public function countWordsForSearchKey(key:String):void
 		{
-			//
-			
-		}
+			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, DictionaryData.wordList.length));
+		}	
 		
 		
 	}

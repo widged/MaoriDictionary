@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	backgroundColor="0x898989" 
+	skinClass="embed.skin.WordPopupSkin" 
+	top="0" bottom="0" left="0" right="0"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.widged.maoriDictionary.word.events.WordEvent;
+			import com.widged.maoriDictionary.word.vo.WordItem;
+			import com.widged.maoriDictionary.word.vo.WordStyle;
+			
+			import spark.components.supportClasses.StyleableTextField;
+			import spark.events.ViewNavigatorEvent;
+			
+			// class data
+			private var _dataChanged:Boolean = false;
+			private var _item:WordItem;
+			
+			public function set item(value:WordItem):void { _item = value; _dataChanged = true; commitData(); }
+			
+			// #################################
+			// ##   Events, Interaction
+			// #################################
+			
+			private function onDefinitionAreaComplete() : void
+			{
+				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.css;
+				definitionArea.heightInLines = NaN;
+				commitData();
+			}
+			
+			private function onClose():void
+			{
+				dispatchEvent(new Event(Event.CLOSE));
+			}
+			
+			// #################################
+			// ##  View
+			// #################################
+			/**
+			 * Commit any change to the word item data. 
+			 * 
+			 * Update any view element that displays word item information.  
+			 */
+			/* :NOTE: invalidate/commit is a way to achieve binding but in a more lightweight fashion */
+			private function commitData():void
+			{
+				// wait until all components are on stage
+				if(!wordLabel || !definitionArea) { return; }
+				// don't change the view if the data haven't changed
+				if(!_dataChanged) {return;}
+				// refresh
+				if(_item)
+				{
+					wordLabel.text       = _item.displayName;
+					StyleableTextField(definitionArea.textDisplay).htmlText = _item.toHtml(_item.definition);
+					definitionArea.validateNow();
+				}
+				else
+				{
+					wordLabel.text       = "";
+					StyleableTextField(definitionArea.textDisplay).htmlText = "";
+					definitionArea.validateNow();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label 
+		id="wordLabel"       
+		left="28" right="24"
+		fontSize="16"
+		top="40"  
+		creationComplete="commitData()"
+		/>
+	
+	<s:TextArea 
+		id="definitionArea"
+		left="24" right="24"
+		top="72" bottom="102"  
+		creationComplete="onDefinitionAreaComplete();" 
+		borderVisible="false" 
+		fontSize="11" color="#808080" 
+		verticalAlign="top" 
+		editable="false" selectable="true" 
+		>
+	</s:TextArea>
+	
+	<s:Button 
+		label="close" 
+		horizontalCenter="0"
+		bottom="24"
+		click="onClose()" />
+	
+</s:SkinnableContainer>

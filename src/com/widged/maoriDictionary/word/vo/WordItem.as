@@ -20,6 +20,7 @@ package com.widged.maoriDictionary.word.vo
 		
 		private function toShort(str:String):String
 		{
+			if(!str) { return ""; }
 			var l:int = str.length;
 			str = str.replace(/<br\/>/g, " ");
 			str = str.replace(/[\r\n]+/g, " ");

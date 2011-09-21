@@ -5,11 +5,7 @@ package com.widged.maoriDictionary.framework.events
 	
 	public class FrameworkEvent extends DataObjectEvent
 	{
-		public static const INFO_SELECT:String           = "infoSelect";
-		public static const INFO_CLOSE:String            = "infoClose";
-		public static const SPLASH_CLOSE:String          = "splashClose";
-		public static const WORD_SELECT:String           = "wordSelected";
-		public static const WORD_CLOSE:String            = "wordClose";
+		public static const DICTIONARY_SELECT:String     = "dictionarySelect";
 		public static const DICTIONARY_SEARCH:String     = "dictionarySearch";
 		public static const LETTER_POINTER_CHANGE:String = "letterPointerChange";
 

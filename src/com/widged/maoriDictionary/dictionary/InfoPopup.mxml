@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnableContainer 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	backgroundColor="0x898989" 
+	skinClass="embed.skin.WordPopupSkin"
+	top="0" bottom="0" left="0" right="0"
+>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:XML id="htmlText"> 
+			<TextFlow xmlns="http://ns.adobe.com/textLayout/2008"> 
+				<![CDATA[<p>Author: <b>Marielle Lange</b></p>
+<p>Dictionary data extracted from <a href="http://www.nzetc.org/tm/scholarly/tei-WillDict.html">A Dictionary of the Maori Language</a>, by Herbert W. Williams, derived from the TEI.xml file obtained from a scan of the book by the <a href="http://www.nzetc.org/tm/scholarly/tei-NZETC-About.html">NZTEC</a> and released under a <i>Creative Commons Attribution-Share Alike 3.0 New Zealand Licence</i>.</p>
+<p>Application icon derived from <a href="http://www.freevector.com/maori-vectors/">Maori Vector Border Pattern</a>, by <a href="http://www.ross.chrystall.co.nz/">Ross Chrystal</a>, released under Creative Commons 3.0 Attribution License.</p>
+<p>Reworked xml and code for this application available on github, <a href="http://github.com/widged/MaoriDictionary">http://github.com/widged/MaoriDictionary</a></i>.</p>
+				]]>
+			</TextFlow> 
+		</fx:XML> 		
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import com.widged.maoriDictionary.word.events.WordEvent;
+			import com.widged.maoriDictionary.word.vo.WordItem;
+			import com.widged.maoriDictionary.word.vo.WordStyle;
+			
+			import mx.events.FlexEvent;
+			
+			import spark.components.supportClasses.StyleableTextField;
+			import spark.events.ViewNavigatorEvent;
+			
+			// class data
+			
+			private function onClose():void
+			{
+				dispatchEvent(new Event(Event.CLOSE));
+			}
+			
+			// #################################
+			// ##  View
+			// #################################
+			
+			
+			private function onDefinitionAreaComplete() : void
+			{
+				StyleableTextField(definitionArea.textDisplay).styleSheet=WordStyle.infoCss;
+				definitionArea.heightInLines = NaN;
+				trace(htmlText);
+				StyleableTextField(definitionArea.textDisplay).htmlText = htmlText;
+				definitionArea.validateNow();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:Label 
+		id="wordLabel" 
+		text="Information, Credits"       
+		left="28" right="24"
+		fontSize="16"
+		top="40"  
+		/>
+
+	<s:TextArea 
+		id="definitionArea"
+		left="24" right="24"
+		top="72" bottom="102"  
+		borderVisible="false" 
+		fontSize="11" color="#808080" 
+		verticalAlign="top" 
+		editable="false" selectable="true"
+		creationComplete="onDefinitionAreaComplete();" 
+		/>
+	
+	<s:Button 
+		label="close" 
+		horizontalCenter="0"
+		bottom="24"
+		click="onClose()" />
+	
+</s:SkinnableContainer>

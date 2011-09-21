@@ -17,7 +17,8 @@ package com.widged.maoriDictionary.dictionary.provider
 		private const GET_WORDS:String               = "SELECT * FROM dictionary";
 		private const GET_WORDS_FOR_LETTER:String    = "SELECT * FROM dictionary WHERE letter = :letter";
 		private const GET_WORDS_FOR_SEARCHKEY:String = "SELECT * FROM dictionary WHERE word LIKE :key OR definition LIKE :key";
-		private const GET_COUNT_OF_WORDS_FOR_LETTER:String = "SELECT COUNT(id) FROM dictionary WHERE letter = :letter";		
+		private const COUNT_WORDS_FOR_LETTER:String = "SELECT COUNT(id) AS count FROM dictionary WHERE letter = :letter";		
+		private const COUNT_WORDS_FOR_SEARCHKEY:String = "SELECT COUNT(id) AS count FROM dictionary WHERE word LIKE :key OR definition LIKE :key";		
 
 		public function DictionaryProvider_sqlite(target:IEventDispatcher=null)
 		{
@@ -26,10 +27,17 @@ package com.widged.maoriDictionary.dictionary.provider
 		
 		public function init():void
 		{
-			var dbFile:File = getApplicationFile("embed/db/maori_dictionary_0.2.db");
-			// dbFile.url - app:/embed/db/maori_dictionary_0.1.db
+			var dbFile:File = getApplicationFile("etc/db/maori_dictionary_0.2.db");
+			// dbFile.url - app:/etc/db/maori_dictionary_0.1.db
+			// app = /mnt/asec on Android
 			openAsyncConnection(dbFile);
 		}
+		
+		private function addCursor(query:String, start:int, offset:int):String
+		{
+			return query + " LIMIT :start,:offset";			
+		}
+			
 		
 		/**
 		 * Get the list of words from the database. 
@@ -45,44 +53,61 @@ package com.widged.maoriDictionary.dictionary.provider
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForLetter(letter:String):void
+		public function listWordsForLetter(letter:String, start:int, offset:int):void
 		{
-			var statement:SQLStatement = toStatement(GET_WORDS_FOR_LETTER);
+			var query:String = addCursor(GET_WORDS_FOR_LETTER, start, offset);
+			var statement:SQLStatement = toStatement(query);
 			statement.parameters[":letter"] = letter;
+			statement.parameters[":start"] = start;
+			statement.parameters[":offset"] = offset;
 			executeStatement(statement, listWordsResultHandler);
 		}	
 
 		/**
-		 * Get the list of words starting with a given letter from the database. 
+		 * Get the list of words matching a search key from the database. 
 		 * 
 		 * @param letter String
 		 **/
-		public function listWordsForSearchKey(key:String):void
+		public function listWordsForSearchKey(key:String, start:int, offset:int):void
 		{
 			var statement:SQLStatement = toStatement(GET_WORDS_FOR_SEARCHKEY);
 			statement.parameters[":key"] = "%" + key + "%";
 			executeStatement(statement, listWordsResultHandler);
 		}	
 		
-		public function listWordsResultHandler(result:Array):void
-		{
-			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, result));
-		}
-		
 		/**
-		 * Gets the number of completed surveys from the surveys table 
+		 * Gets the number of words starting with a given letter 
 		 * 		 
 		 * @param args Array [responder:DatabaseRespodner]
 		 **/
 		public function countWordsForLetter(letter:String):void
 		{
-			/*
-			if ( args[0] is EventDispatcher )
-			{
-				var sqlWrapper:SQLWrapper = this.sqlStatementFactory.newInstance(args[0], GET_NUMBER_OF_COMPLETED_SURVEYS);				
-				sqlWrapper.statement.execute();
-			}
-			*/
+			var statement:SQLStatement = toStatement(COUNT_WORDS_FOR_LETTER);
+			statement.parameters[":letter"] = letter;
+			executeStatement(statement, countWordsResultHandler);
+		}
+
+		/**
+		 * Get the number of words matching a search key from the database. 
+		 * 
+		 * @param letter String
+		 **/
+		public function countWordsForSearchKey(key:String):void
+		{
+			var statement:SQLStatement = toStatement(COUNT_WORDS_FOR_SEARCHKEY);
+			statement.parameters[":key"] = "%" + key + "%";
+			executeStatement(statement, listWordsResultHandler);
+		}	
+		
+		
+		public function listWordsResultHandler(result:Array):void
+		{
+			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, result));
+		}
+		
+		public function countWordsResultHandler(result:Array):void
+		{
+			dispatcher.dispatchEvent(new ProviderResultEvent(ProviderResultEvent.RESULT, result));
 		}
 		
 		

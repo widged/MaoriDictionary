@@ -1,21 +1,11 @@
 package com.widged.maoriDictionary.framework
 {
-	import com.widged.io.IDataProvider;
-	import com.widged.io.events.ProviderErrorEvent;
-	import com.widged.io.events.ProviderResultEvent;
 	import com.widged.io.events.ProviderStatusEvent;
 	import com.widged.maoriDictionary.azScroller.ScrollerAZ;
-	import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider;
-	import com.widged.maoriDictionary.dictionary.provider.DictionaryProvider_sqlite;
-	import com.widged.maoriDictionary.dictionary.provider.IDictionaryProvider;
-	import com.widged.maoriDictionary.splashScreen.SplashScreen;
-	import com.widged.maoriDictionary.word.WordView;
-	
-	import flash.display.Scene;
+	import com.widged.maoriDictionary.dictionary.vo.MaoriDictionary;
 	
 	import mx.collections.ArrayList;
 	
-	import spark.components.NavigatorContent;
 	import spark.components.ViewNavigator;
 
 	public class FrameworkController
@@ -24,7 +14,7 @@ package com.widged.maoriDictionary.framework
 		import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
 		import com.widged.maoriDictionary.framework.events.FrameworkEvent;
 		import com.widged.maoriDictionary.word.vo.WordItem;
-		import com.widged.maoriDictionary.dictionary.ListingView;
+		import com.widged.maoriDictionary.dictionary.ListingCursorView;
 		
 		// event bus
 		private var dispatcher:FrameworkDispatcher;
@@ -57,12 +47,12 @@ package com.widged.maoriDictionary.framework
 		// ##   Initialize
 		// #################################
 
-		private var dictionary:IDictionaryProvider;
+		private var dictionary:MaoriDictionary;
 		public function initialize():void
 		{
 			initializeDictionary();
 			dispatcher = FrameworkDispatcher.getInstance();
-			dispatcher.addEventListener(FrameworkEvent.SPLASH_CLOSE, onSplashClose);
+			dispatcher.addEventListener(FrameworkEvent.DICTIONARY_SELECT, onDictionarySelect);
 		}
 
 		// #################################
@@ -77,7 +67,7 @@ package com.widged.maoriDictionary.framework
 		private var _hasDictionaryProvider:Boolean = false;
 		private function initializeDictionary():void
 		{
-			dictionary  = new DictionaryProvider();
+			dictionary  = new MaoriDictionary();
 			dictionary.addEventListener(ProviderStatusEvent.READY, onReady);
 			dictionary.init();
 			
@@ -88,40 +78,11 @@ package com.widged.maoriDictionary.framework
 			}
 		}
 		
-		private function onSplashClose(event:FrameworkEvent):void
+		private function onDictionarySelect(event:FrameworkEvent):void
 		{
-			trace('[onSplashClose]');
-			dispatcher.removeEventListener(FrameworkEvent.SPLASH_CLOSE, onSplashClose);
+			// dispatcher.removeEventListener(FrameworkEvent.SPLASH_CLOSE, onDictionarySelect);
 			showListing();
 		}
-		
-
-		private function onWordSelection(event:FrameworkEvent):void
-		{
-			dispatcher.addEventListener(FrameworkEvent.WORD_CLOSE, onWordClose);
-			navigator.pushView(com.widged.maoriDictionary.word.WordView, event.data as WordItem);
-		}
-
-		private function onWordClose(event:FrameworkEvent):void
-		{
-			dispatcher.removeEventListener(FrameworkEvent.WORD_CLOSE, onWordClose);
-			navigator.popView();
-		}
-		
-		private function onInfoSelection(event:FrameworkEvent):void
-		{
-			dispatcher.removeEventListener(FrameworkEvent.INFO_SELECT, onInfoSelection);
-			dispatcher.addEventListener(FrameworkEvent.INFO_CLOSE, onInfoClose);
-			navigator.pushView(com.widged.maoriDictionary.splashScreen.SplashScreen, null);
-		}
-
-		private function onInfoClose(event:FrameworkEvent):void
-		{
-			dispatcher.addEventListener(FrameworkEvent.INFO_SELECT, onInfoSelection);
-			dispatcher.removeEventListener(FrameworkEvent.INFO_CLOSE, onSplashClose);
-			navigator.popView();
-		}
-		
 		
 		// #################################
 		// ##   Navigation
@@ -131,9 +92,7 @@ package com.widged.maoriDictionary.framework
 		public function showListing():void
 		{
 			var letter:String = ScrollerAZ.FIRST_LETTER;
-			dispatcher.addEventListener(FrameworkEvent.INFO_SELECT, onInfoSelection);
-			dispatcher.addEventListener(FrameworkEvent.WORD_SELECT, onWordSelection);
-			navigator.pushView(com.widged.maoriDictionary.dictionary.ListingView, {arrayList: null, vscroll: 0, letter: letter, dictionary: dictionary});
+			navigator.pushView(com.widged.maoriDictionary.dictionary.ListingCursorView, {arrayList: null, vscroll: 0, letter: letter, dictionary: dictionary});
 		}
 		
 		

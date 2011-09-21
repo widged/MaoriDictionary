@@ -10,17 +10,15 @@
 	
 	<fx:Script>
 		<![CDATA[
-			import com.widged.maoriDictionary.word.vo.WordStyle;
-			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
-			import com.widged.maoriDictionary.framework.events.FrameworkEvent;
+			import com.widged.maoriDictionary.word.events.WordEvent;
 			import com.widged.maoriDictionary.word.vo.WordItem;
+			import com.widged.maoriDictionary.word.vo.WordStyle;
 			
 			import spark.components.supportClasses.StyleableTextField;
 
-			// event bus
-			private var frameworkDispatcher:FrameworkDispatcher;
 			// class data 
 			private var dataChanged : Boolean = true;
+			private var oldData:Object;
 
 			// #################################
 			// ##   Events, Interaction
@@ -45,8 +43,8 @@
 			
 			protected function onClick(event:MouseEvent) : void
 			{
-				frameworkDispatcher = FrameworkDispatcher.getInstance();
-				frameworkDispatcher.dispatchEvent( new FrameworkEvent( FrameworkEvent.WORD_SELECT, data.wordItem ) );
+				trace("[WordRenderer.onClick]");
+				dispatchEvent( new WordEvent( WordEvent.WORD_SELECT, data.wordItem, true ) );
 			}
 			
 			// #################################
@@ -60,6 +58,7 @@
 			/* :NOTE: invalidate/commit is a way to achieve binding but in a more lightweight fashion */
 			private function commitData():void
 			{
+				if(data && oldData && data.wid == oldData.wid) { return; }
 				// let's not refresh the view until all elements are on stage
 				if(!definitionArea || !wordLabel || !indiceLabel || !indiceBox) { return; }
 
@@ -87,9 +86,9 @@
 	
 	<fx:Declarations>
 	</fx:Declarations>
-		<s:Rect width="100%" height="100%">
+		<s:Rect top="0" bottom="0" left="0" right="0">
 			<s:fill>
-				<s:SolidColor id="rowBackgound" color="#FF0000" />
+				<s:SolidColor id="rowBackgound" />
 			</s:fill>
 		</s:Rect>
 	
@@ -105,7 +104,7 @@
 			id="definitionArea"
 			top="33" bottom="3" left="12" right="64" 
 			creationComplete="onDefinitionAreaComplete();" 
-			borderVisible="false" 
+			borderVisible="false" contentBackgroundAlpha="0" 
 			fontSize="11" color="#808080" 
 			verticalAlign="top" 
 			editable="false" selectable="true" 

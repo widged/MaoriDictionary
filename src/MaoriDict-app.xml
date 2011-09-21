@@ -15,10 +15,10 @@
 
 	<!-- A universally unique application identifier. Must be unique across all AIR applications.
 	Using a reverse DNS-style name as the id is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-	<id>MaoriDictionar</id>
+	<id>com.widged.maoriDictionary</id>
 
 	<!-- Used as the filename for the application. Required. -->
-	<filename>com.widged.maoriDictionary</filename>
+	<filename>MaoriDictionary</filename>
 
 	<!-- The name that is displayed in the AIR application installer. 
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
@@ -37,7 +37,7 @@
 	<description>Port to Android of Williams' Dictionary of Maori Language (1957). Dictionary content derived from the text provided by NZETC - http://www.nzetc.org/tm/scholarly/tei-WillDict.html</description> 
 
 	<!-- Copyright information. Optional -->
-	<copyright>Marielle Lange</copyright> -->
+	<!--<copyright>Marielle Lange</copyright> -->
 
 	<!-- Publisher ID. Used if you're updating an application created prior to 1.5.3 -->
 	<!-- <publisherID></publisherID> -->

@@ -9,7 +9,6 @@
 	<fx:Script>
 		<![CDATA[
 			import com.widged.events.DataObjectEvent;
-			import com.widged.maoriDictionary.framework.events.FrameworkDispatcher;
 			
 			import spark.components.IItemRenderer;
 			import spark.events.RendererExistenceEvent;

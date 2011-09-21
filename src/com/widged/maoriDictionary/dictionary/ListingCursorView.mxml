@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:azScroller="com.widged.maoriDictionary.azScroller.*" 
+		xmlns:word="com.widged.maoriDictionary.word.*" 
+		title="WordListing" 
+		viewDeactivate="onDeactivate(event)" 
+		dataChange="onDataChange()" 
+>
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:navigationContent>
+		<s:Button icon="@Embed('embed/pix/icon_information.png')"  
+				  click="onInfoClick(event);"/>
+	</s:navigationContent>	
+	<s:titleContent>
+		<s:TextInput id="key" width="100%"/>
+	</s:titleContent>
+	<s:actionContent>
+		<s:Button icon="@Embed('embed/pix/icon_magnify_glass.png')"  
+				  click="onSearchClick()" /> 
+	</s:actionContent>		
+	<fx:Script>
+		<![CDATA[
+			import com.widged.events.DataObjectEvent;
+			import com.widged.io.events.ProviderErrorEvent;
+			import com.widged.io.events.ProviderResultEvent;
+			import com.widged.maoriDictionary.dictionary.vo.MaoriDictionary;
+			import com.widged.maoriDictionary.dictionary.vo.RowsCursor;
+			import com.widged.maoriDictionary.word.WordPopup;
+			import com.widged.maoriDictionary.word.events.WordEvent;
+			import com.widged.maoriDictionary.word.vo.WordItem;
+			
+			import mx.collections.ArrayList;
+			import mx.events.PropertyChangeEvent;
+			import mx.managers.CursorManager;
+			
+			import spark.events.ViewNavigatorEvent;
+			
+			// helpers
+			private var dictionary:MaoriDictionary;
+			// data binding
+			private var listChanged:Boolean = false;
+
+			private const ROW_HEIGHT:int             = 86;
+			private const PAGE_SIZE:int              = 5;
+			private const CURSOR_OFFSET:int          = 10;
+			private const SCROLL_UPDATE_INTERVAL:int = 200;
+
+			private var _startScrollTime:Date        = new Date();
+
+			// #################################
+			// ##  Construct, Populate, Destruct
+			// #################################
+			
+			private function onDataChange():void
+			{
+				listChanged = true;
+				dictionary = data ?  data.dictionary : null;
+				if(dictionary)
+				{
+					addEventListener(WordEvent.WORD_SELECT, onWordSelection);
+					dictionary.addEventListener(ProviderErrorEvent.FAULT,  onProviderFault);
+				}
+				if(!data.arrayList) {
+					loadLetterData(); 
+				} 
+				else
+				{
+					commitList();
+				}
+				commitLetter();
+			}
+
+			private function initializeListing():void
+			{
+				commitList();				
+			}
+			
+			private function initializeVScroller():void
+			{
+				// Does not work with mouse wheel or arrow buttons due to bug http://bugs.adobe.com/jira/browse/SDK-26533
+				// listing.scroller.verticalScrollBar.addEventListener( Event.CHANGE, onVerticalScrollChange ); 
+				vScroller.viewport.addEventListener( PropertyChangeEvent.PROPERTY_CHANGE, onVerticalScrollChange );
+			}
+			
+			
+			private function onDeactivate(event:ViewNavigatorEvent):void
+			{
+				letterScroller.removeEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
+				dictionary.removeEventListener(ProviderErrorEvent.FAULT,  onProviderFault);
+			}
+			
+			// #################################
+			// ##   Events, Interaction
+			// #################################
+			
+			private function onSearchClick():void
+			{
+				// search provider for  key.text
+				if(!dictionary) { return; }
+				data.arrayList = null;
+				// dictionary.listWordsForSearchKey(key.text);
+			}
+			
+			private function onLetterPointerChange(event:DataObjectEvent):void
+			{
+				data.arrayList = null;
+				data.letter = event.data.letter;
+				commitLetter();
+				loadLetterData(); 
+			}
+			
+			protected function onVerticalScrollChange( event : PropertyChangeEvent ) : void 
+			{
+				if ( event.property == "verticalScrollPosition" ) {
+					addEventListener(Event.ENTER_FRAME, onScrollUpdate);
+					if(!_startScrollTime) { _startScrollTime = new Date(); }
+					vScroller.verticalScrollBar.value = Math.round(event.newValue as Number);
+					if(event.newValue > data.vScrollerHeight) { event.newValue = data.vScrollerHeight}
+				}
+			}
+			
+			private function onScrollUpdate(event:Event):void
+			{
+				if(!_startScrollTime) { return; };
+				var d:Date = new Date();
+				if(d.time - _startScrollTime.time < SCROLL_UPDATE_INTERVAL) { return; }
+				// we are past the scroll update inerval, reset the timer and move the scroll 
+				removeEventListener(Event.ENTER_FRAME, onScrollUpdate);
+				_startScrollTime = null;
+				loadScrollData();
+			}
+
+			// #################################
+			// ##  IO
+			// #################################
+
+			private function loadLetterData():void
+			{
+				CursorManager.setBusyCursor();
+				if(!data.letter) { data.letter = ScrollerAZ.FIRST_LETTER; }
+				if(!dictionary) { return; }
+				dictionary.addEventListener(ProviderResultEvent.RESULT, onLetterCountResult);
+				dictionary.countWordsForLetter(data.letter);
+				
+				function onLetterCountResult(event:ProviderResultEvent):void
+				{
+					dictionary.removeEventListener(ProviderResultEvent.RESULT, onLetterCountResult);
+					resetRowsCursor(event.result[0].count);
+				}
+			}
+			
+			private function loadScrollData():void
+			{
+				data.rowCursor.move(cursorStart);
+				if(listing) { listing.top = listingTop; }
+				
+				dictionary.addEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
+				dictionary.listWordsForLetter(data.letter, data.rowCursor);
+				
+				function onLetterRowsResult(event:ProviderResultEvent):void
+				{
+					dictionary.removeEventListener(ProviderResultEvent.RESULT, onLetterRowsResult);
+					var list:Array = event.result;
+					data.arrayList = new ArrayList(list);
+					listChanged = true;
+					commitList();
+				}
+				
+			}
+			
+			private function onProviderFault(event:ProviderErrorEvent):void
+			{
+				trace("[ListingCursorView.onProviderFault]", event.msg);
+			}
+			
+			// #################################
+			// ##  Logic
+			// #################################
+			
+			public function get vScrollMax():int  { return ((data.rowCursor.max * ROW_HEIGHT) / PAGE_SIZE) + (ROW_HEIGHT * PAGE_SIZE); }
+			public function get cursorStart():int { return vScroller ? Math.floor((vScroller.verticalScrollBar.value / ROW_HEIGHT) * PAGE_SIZE)  : 1}
+			public function get listingTop():int  { return vScroller.verticalScrollBar.value; }
+			
+			private function resetRowsCursor(rowsCount:int):void
+			{
+				data.rowCursor = new RowsCursor(rowsCount, CURSOR_OFFSET);
+				data.vScrollerHeight = vScrollMax;
+				commitScroll();
+				loadScrollData();
+			}
+			
+			private function commitScroll():void
+			{
+				if(!vScroller) { return; }
+				vScroller.verticalScrollBar.value = 0;
+				vScrollerContent.height = data ? data.vScrollerHeight : 0;
+			}
+			
+			
+			private function commitList():void
+			{
+				CursorManager.removeAllCursors();
+				if(!listing) { return; }
+				if(!listChanged) { return; }
+				listChanged = false;
+				listing.top = listingTop;
+				listing.dataProvider  = data ? data.arrayList as ArrayList : null;;
+			}
+			
+			private function commitLetter():void
+			{
+				if(!letterScroller) { return; }
+				letterScroller.selectedLetter = data.letter; 
+				letterScroller.addEventListener(ScrollerAZ.LETTER_POINTER_CHANGE, onLetterPointerChange);
+			}
+
+			// #################################
+			// ##  Word Details
+			// #################################
+			
+			private var wordPopup:WordPopup;
+			private function onWordSelection(event:WordEvent):void
+			{
+				event.stopPropagation();
+				wordPopup = new WordPopup();
+				wordPopup.item = event.data as WordItem;
+				wordPopup.addEventListener(Event.CLOSE, onWordClose);
+				addElement(wordPopup);
+			}
+			
+			private function onWordClose(event:Event):void
+			{
+				wordPopup.removeEventListener(Event.CLOSE, onWordClose);
+				removeElement(wordPopup);
+				wordPopup = null;
+			}			
+
+			// #################################
+			// ##  Info windows
+			// #################################
+
+			private var infoPopup:InfoPopup;
+			private function onInfoClick(event:Event):void
+			{
+				trace("[ListingCursorView.onInfoSelection]");
+				event.stopPropagation();
+				infoPopup = new InfoPopup();
+				infoPopup.addEventListener(Event.CLOSE, onInfoClose);
+				this.addElement(infoPopup);
+			}
+			
+			private function onInfoClose(event:Event):void
+			{
+				infoPopup.removeEventListener(Event.CLOSE, onInfoClose);
+				removeElement(infoPopup);
+				infoPopup = null;
+			}			
+			
+		]]>
+	</fx:Script>
+	
+	<s:Scroller id="vScroller" 
+				top="30" bottom="0" left="0" right="0"
+				minViewportInset="0"
+				skinClass="embed.skin.AlwaysVisibleScrollerSkin" 
+				horizontalScrollPolicy="off" 
+				initialize="initializeVScroller();" 
+				alpha="1" 
+		>
+		<s:Group>
+			<s:Rect 
+				id="vScrollerContent" 
+				left="0" right="0" 
+				height="0" alpha="1"
+			>
+				<s:stroke>
+					<s:SolidColorStroke color="#FFFFFF" />
+				</s:stroke>
+			</s:Rect>
+			<s:DataGroup id="listing"
+						 top="0" bottom="0" left="0" right="0"
+						 itemRenderer="com.widged.maoriDictionary.word.renderers.WordRenderer" 
+						 initialize="initializeListing()" creationComplete="commitScroll();" 
+				>
+				<s:layout>
+					<s:VerticalLayout 
+						paddingLeft="0" paddingRight="0" paddingTop="0" paddingBottom="0" gap="0" 
+						useVirtualLayout="true"
+						/>
+				</s:layout>
+			</s:DataGroup>
+			
+		</s:Group>
+
+	</s:Scroller>
+
+	
+	<azScroller:ScrollerAZ
+		id="letterScroller"
+		height="36" top="0" left="0" right="0" 
+		backgroundAlpha="0" 
+		creationComplete="commitLetter()" 
+	/>
+	
+	
+</s:View>

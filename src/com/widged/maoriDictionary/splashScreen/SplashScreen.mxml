@@ -16,8 +16,7 @@
 			protected function onTouchInteractionStart(event:Event):void
 			{
 				var frameworkDispatcher:FrameworkDispatcher = FrameworkDispatcher.getInstance();
-				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.SPLASH_CLOSE));
-				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.INFO_CLOSE));
+				frameworkDispatcher.dispatchEvent(new FrameworkEvent(FrameworkEvent.DICTIONARY_SELECT));
 			}
 				
 		]]>

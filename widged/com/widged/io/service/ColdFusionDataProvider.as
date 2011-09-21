@@ -1,6 +1,8 @@
 package com.widged.io.service
 {
     
+    import com.widged.io.IDataProvider;
+    
     import flash.events.EventDispatcher;
     import flash.events.IEventDispatcher;
     
@@ -12,11 +14,13 @@ package com.widged.io.service
     public class ColdFusionDataProvider extends RemoteDataProvider implements IDataProvider
     {
         protected var userService:RemoteObject;
-        public function ColdFusionDataProvider(target:IEventDispatcher=null)
+		
+		public function ColdFusionDataProvider(serviceSource:String, target:IEventDispatcher=null)
         {
             super(target);
-            userService = new RemoteObject("ColdFusion");
-            userService.source = "xyz.cfc.myService";
+			userService = new RemoteObject("ColdFusion");
+			userService.source = serviceSource;
         }
+		
     }
 }

@@ -1,9 +1,10 @@
 package com.widged.io.service
 {
+	import com.widged.io.IDataProvider;
 	import com.widged.io.global.DataGetter;
-    
-    import flash.events.EventDispatcher;
-    import flash.events.IEventDispatcher;
+	
+	import flash.events.EventDispatcher;
+	import flash.events.IEventDispatcher;
     
     /**
     * A class with shared functionality for providers that connect to remote webservices.
@@ -25,17 +26,17 @@ package com.widged.io.service
     */
     public class RemoteDataProvider extends EventDispatcher implements IDataProvider
     {
-        public function RemoteDataProvider(target:IEventDispatcher=null)
+		protected var serverIP:String;
+		protected var dispatcher:IEventDispatcher;
+		
+        public function RemoteDataProvider(url:String, target:IEventDispatcher=null)
         {
             super(target);
+			dispatcher = target ? target : this;
+			serverIP = url;
         }
+		
         
-        protected function getServerIP():String
-        {
-            var config:ConfigVO = DataGetter.getInstance().config;
-            var serverIP:String = config ? config.serverIP : null;
-            return serverIP;
-        }
             
     }
 }

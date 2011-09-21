@@ -15,7 +15,7 @@ package com.widged.maoriDictionary.dictionary.provider
 		
 		// statements
 		private const GET_WORDS:String               = "SELECT * FROM dictionary";
-		private const GET_WORDS_FOR_LETTER:String    = "SELECT * FROM questions WHERE letter = :letter";
+		private const GET_WORDS_FOR_LETTER:String    = "SELECT * FROM dictionary WHERE letter = :letter";
 		private const GET_WORDS_FOR_SEARCHKEY:String = "SELECT * FROM dictionary WHERE id = :id";;
 		private const GET_COUNT_OF_WORDS_FOR_LETTER:String = "SELECT COUNT(id) FROM SURVEYS WHERE uploaded=1";		
 		

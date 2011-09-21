@@ -266,7 +266,7 @@ package com.widged.maoriDictionary.dictionary.parser
 		{
 			var isSuccess:Boolean = true;
 
-			var sampleFile:File = File.applicationDirectory.resolvePath("embed/db/maori_dictionary_empty.db");
+			var sampleFile:File = File.applicationDirectory.resolvePath("etc/db/maori_dictionary_empty.db");
 			if ( !sampleFile.exists )
 			{
 				isSuccess = false;
