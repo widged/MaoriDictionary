@@ -1,6 +1,8 @@
 MaoriDictionary
 =====================================================
 
+Deprecated. Ported to Elm - https://github.com/widged/elm-maori-dictionary
+
 Author: Marielle Lange
 Version: 1
 
